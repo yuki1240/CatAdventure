@@ -32,12 +32,12 @@ public class GameManager : MonoBehaviour
             dropImage = childTrans.transform.Find("DropImage").transform.gameObject.GetComponent<Image>();
 
             // ImageコンポーネントがNoneの時の処理をしたい
-            /*
-            if (dropImage.sprite.name != "None")
+
+            if (dropImage.sprite != null)
             {
                 print(dropImage.sprite.name);
             }
-            */
+
         }
     }
 

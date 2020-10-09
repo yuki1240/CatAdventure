@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public float speed = 1.0f;
     private Animator animator = null;
     private Rigidbody2D rb = null;
 
@@ -26,25 +27,34 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.anyKeyDown)
+        // 現在の座標を取得
+        Vector3 position = transform.position;
+
+        // 方向転換するか？
+
+        // 移動（キー操作受付部分）
+        if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            Vector2? action = this.actionKeyDown();
-            if (action.HasValue)
-            {
-                // キー入力があればAnimatorにstateをセットする
-                setStateToAnimator(vector: action.Value);
-                return;
-            }
+            position += new Vector3(0f, 1f, 0f) * speed;
+            animator.Play("Up", 0);
         }
-        // 入力からVector2インスタンスを作成
-        Vector2 vector = new Vector2(
-            (int)Input.GetAxis("Horizontal"),
-            (int)Input.GetAxis("Vertical"));
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            position += new Vector3(0f, -1f, 0f) * speed;
+            animator.Play("Down", 0);
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            position += new Vector3(-1f, 0f, 0f) * speed;
+            animator.Play("TrunLeft", 0);
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            position += new Vector3(1f, 0f, 0f) * speed;
+            animator.Play("TrunRight", 0);
+        }
 
-        // キー入力が続いている場合は、入力から作成したVector2を渡す
-        // キー入力がなければ null
-        setStateToAnimator(vector: vector != Vector2.zero ? vector : (Vector2?)null);
-
+        transform.position = position;
     }
 
     void FixedUpdate()
