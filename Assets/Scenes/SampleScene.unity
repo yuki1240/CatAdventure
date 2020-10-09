@@ -213,7 +213,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.035597444, y: -0.000004053116}
@@ -693,7 +693,7 @@ GameObject:
   - component: {fileID: 722788843}
   - component: {fileID: 722788844}
   m_Layer: 0
-  m_Name: "\u80CC\u666F2"
+  m_Name: BackGround_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1684,7 +1684,7 @@ GameObject:
   - component: {fileID: 1321736205}
   - component: {fileID: 1321736206}
   m_Layer: 0
-  m_Name: "\u80CC\u666F1"
+  m_Name: BackGround_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
