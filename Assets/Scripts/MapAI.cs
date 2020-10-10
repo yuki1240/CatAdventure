@@ -5,6 +5,7 @@ using System.Collections.Generic;
 // 穴掘りアルゴリズム
 public class MapAI : MonoBehaviour
 {
+	public Sprite Image;
 
 	// チップ定数
 	const int CHIP_NONE = 0; // 通過可能
@@ -16,29 +17,41 @@ public class MapAI : MonoBehaviour
 	// 穴掘りが完了したかどうか
 	bool _bDone = false;
 
-	// チップ上のX座標を取得する.
+	// チップ上のX座標を取得する（引数：左からいくつ目のブロック）
 	float GetChipX(int i)
 	{
+		// 画面の左下の座標を取得している？
 		Vector2 min = Camera.main.ViewportToWorldPoint(new Vector2(0, 0));
-		var spr = Util.GetSprite("", "Wall");
+
+		// Blockイメージを取得
+		var spr = Image;
+		// 上記のイメージの幅を取得
 		var sprW = spr.bounds.size.x;
 
+		// 画面の左下 + Blockイメージの幅*i + Blockイメージの幅÷2
+		//  → 画面の左下からBlockイメージの幅ずつ座標を返す
 		return min.x + (sprW * i) + sprW / 2;
 	}
 
-	// チップ上のy座標を取得する.
+	// チップ上のY座標を取得する.
 	float GetChipY(int j)
 	{
+		// 画面の右上の座標を取得している？
 		Vector2 max = Camera.main.ViewportToWorldPoint(new Vector2(1, 1));
-		var spr = Util.GetSprite("", "Wall");
+
+		var spr = Image;
+		// 上記のイメージの高さを取得
 		var sprH = spr.bounds.size.y;
 
+		// 画面の右上 - Blockイメージの幅*i - Blockイメージの幅÷2
+		//  → 画面の右上からBlockイメージの幅ずつ座標を返す
 		return max.y - (sprH * j) - sprH / 2;
 	}
 
-	// 壁を作る
+	// 壁を作る（引数：2次元配列管理クラス, 壁を作るx座標, 壁を作るy座標）
 	void AddWall(Layer2D layer, int i, int j)
 	{
+		
 		if (layer.Get(i, j) == CHIP_wALL)
 		{
 			// すでに存在するので何もしない
@@ -49,7 +62,7 @@ public class MapAI : MonoBehaviour
 		int idx = layer.ToIdx(i, j);
 		float x = GetChipX(i);
 		float y = GetChipY(j);
-		chips[idx] = Util.CreateToken(x, y, "", "Wall", "Wall");
+		chips[idx] = Util.CreateToken(x, y, "", "Block", "Block");
 	}
 	// 壁を削除
 	void RemoveWall(Layer2D layer, int i, int j)

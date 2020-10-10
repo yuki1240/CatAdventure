@@ -30,9 +30,8 @@ public class GameManager : MonoBehaviour
         {
             // FremeImage1～Nまで子のDropImageを取得
             dropImage = childTrans.transform.Find("DropImage").transform.gameObject.GetComponent<Image>();
-
-            // ImageコンポーネントがNoneの時の処理をしたい
-
+            
+            // 枠の中に画像がセットされているとき、その画像名を取得
             if (dropImage.sprite != null)
             {
                 print(dropImage.sprite.name);
