@@ -8,20 +8,6 @@ public class GameManager : MonoBehaviour
     public Transform frames;
     public GameObject RunButton;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-
-
     public void RunButtonClick()
     {
         Image dropImage;

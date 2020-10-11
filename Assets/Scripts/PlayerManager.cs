@@ -8,12 +8,11 @@ public class PlayerManager : MonoBehaviour
     private Animator animator = null;
     private Rigidbody2D rb = null;
 
-
     // ぶつかっているかのフラグ
-    bool BoxCollisionFlag = false;
+    // bool BoxCollisionFlag = false;
 
     // 今実行中のコマンド
-    string NowCommand = null;
+    // string NowCommand = null;
 
     // 今どの方向を向いているか
     // string nowStatus = null;
@@ -83,7 +82,7 @@ public class PlayerManager : MonoBehaviour
         // 宝箱にぶつかっていたら
         if (collision.transform.tag == "box")
         {
-            BoxCollisionFlag = true;
+            // BoxCollisionFlag = true;
         }
     }
 }

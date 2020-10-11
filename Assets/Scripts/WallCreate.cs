@@ -14,6 +14,7 @@ public class WallCreate : MonoBehaviour
         // 下の壁を作成
         float posX = -2.61f;
         float posY = -0.6f;
+
         for (int i = 0; i < 14; i++)
         {
             GameObject objX = Instantiate(block, new Vector3(posX, posY, 0.0f), Quaternion.identity);
