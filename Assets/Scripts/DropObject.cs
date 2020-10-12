@@ -34,8 +34,16 @@ public class DropObject : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     {
         Image droppedImage = pointerEventData.pointerDrag.GetComponent<Image>();
         iconImage.sprite = droppedImage.sprite;
-        // iconImage.transform.localScale = new Vector2(iconImage.transform.localScale.x * 0.5f, iconImage.transform.localScale.y * 0.5f);
-        // nowSprite = droppedImage.sprite;
+
+        // ドロップする予定の画像サイズを取得
+        float dropImageSizeX = iconImage.transform.localScale.x;
+        float dropImageSizeY = iconImage.transform.localScale.y;
+
+        // ドロップする予定の画像の大きさを半分にして表示
+        // iconImage.transform.localScale = new Vector2(dropImageSizeX * 0.5f, dropImageSizeY * 0.5f);
+
+        // ドロップ画像として設定
+        nowSprite = droppedImage.sprite;
         iconImage.color = Vector4.one;
     }
 }
