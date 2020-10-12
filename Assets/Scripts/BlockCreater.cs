@@ -25,10 +25,10 @@ public class BlockCreater : MonoBehaviour
         {
             for (int x = 0; x < blockCountX; x++)
             {
-                bool blockFlag = true; // 壁
-                if (Random.Range(0, 2) == 1)
+                bool blockFlag = false; // 通路
+                if (x == 0 || y == 0 || x == blockCountX - 1 || y == blockCountY - 1)
                 {
-                    blockFlag = false; // 通路
+                    blockFlag = true; // 壁
                 }
                 mapInfo[x, y] = blockFlag;
                 // mapInfo[x, y] = Random.Range(0, 2) == 1;
