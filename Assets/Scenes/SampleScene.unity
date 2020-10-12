@@ -2761,7 +2761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   block: {fileID: 952633608720844836, guid: c184f2a05388e0d4a87e99cc435e5f6b, type: 3}
-  startPosition: {x: 0, y: 0, z: 0}
+  startPosition: {x: -2.92, y: 0, z: 0}
   blockCountX: 7
   blockCountY: 7
 --- !u!4 &703859239
