@@ -35,11 +35,7 @@ public class BlockCreater : MonoBehaviour
             }
         }
 
-        return;
-
         // 棒を立て、倒す
-        var rnd = new Random();
-
         for (int x = 2; x < blockCountX - 1; x += 2)
         {
             for (int y = 2; y < blockCountY - 1; y += 2)
