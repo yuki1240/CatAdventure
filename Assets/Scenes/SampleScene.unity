@@ -2740,13 +2740,30 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 703859239}
+  - component: {fileID: 703859238}
   m_Layer: 0
   m_Name: BlockCreater
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
+--- !u!114 &703859238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703859237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8af8f4f722a1bb41b7d6f48d82d6221, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  block: {fileID: 952633608720844836, guid: c184f2a05388e0d4a87e99cc435e5f6b, type: 3}
+  startPosition: {x: 0, y: 0, z: 0}
+  blockCountX: 7
+  blockCountY: 7
 --- !u!4 &703859239
 Transform:
   m_ObjectHideFlags: 0
