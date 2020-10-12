@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class blockCreater : MonoBehaviour
+public class BlockCreater : MonoBehaviour
 {
     public GameObject block;
     public Vector3 startPosition = Vector3.zero;
-    public int blockCountX = 6; // 必ず5以上
-    public int blockCountY = 6; // 必ず5以上
+    public int blockCountX = 7; // 必ず5以上の奇数
+    public int blockCountY = 7; // 必ず5以上の奇数
 
     bool[,] mapInfo = null;
 
@@ -15,6 +15,7 @@ public class blockCreater : MonoBehaviour
     {
         MapGenerator();
         blockGenerator();
+        print("ok");
     }
 
     void MapGenerator()
@@ -24,15 +25,17 @@ public class blockCreater : MonoBehaviour
         {
             for (int x = 0; x < blockCountX; x++)
             {
-                bool blockFlag = false; // 壁
+                bool blockFlag = true; // 壁
                 if (Random.Range(0, 2) == 1)
                 {
-                    blockFlag = true; // 通路
+                    blockFlag = false; // 通路
                 }
                 mapInfo[x, y] = blockFlag;
                 // mapInfo[x, y] = Random.Range(0, 2) == 1;
             }
         }
+
+        return;
 
         // 棒を立て、倒す
         var rnd = new Random();
@@ -41,8 +44,8 @@ public class blockCreater : MonoBehaviour
         {
             for (int y = 2; y < blockCountY - 1; y += 2)
             {
-                // false → 壁
-                mapInfo[x, y] = false; // 棒を立てる
+                // true → 壁
+                mapInfo[x, y] = true; // 棒を立てる
 
                 // 倒せるまで繰り返す
                 while (true)
@@ -50,11 +53,11 @@ public class blockCreater : MonoBehaviour
                     // 1行目のみ上に倒せる
                     int direction;
                     if (y == 2)
-                        // 0～4まで
-                        direction = UnityEngine.Random.Range(0, 5);
-                    else
                         // 0～3まで
                         direction = UnityEngine.Random.Range(0, 4);
+                    else
+                        // 0～2まで
+                        direction = UnityEngine.Random.Range(0, 3);
 
                     // 棒を倒す方向を決める
                     int wallX = x;
@@ -77,9 +80,9 @@ public class blockCreater : MonoBehaviour
                     }
 
                     // 壁じゃない場合のみ倒して終了
-                    if (mapInfo[wallX, wallY] != false)
+                    if (mapInfo[wallX, wallY] != true)
                     {
-                        mapInfo[wallX, wallY] = false;
+                        mapInfo[wallX, wallY] = true;
                         break;
                     }
                 }

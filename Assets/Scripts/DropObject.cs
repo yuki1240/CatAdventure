@@ -16,6 +16,11 @@ public class DropObject : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     {
         if (pointerEventData.pointerDrag == null) return;
         Image droppedImage = pointerEventData.pointerDrag.GetComponent<Image>();
+        if (droppedImage.sprite == null)
+        {
+            return;
+        }
+
         iconImage.sprite = droppedImage.sprite;
 
         iconImage.color = Vector4.one * 0.6f;
@@ -33,6 +38,10 @@ public class DropObject : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     public void OnDrop(PointerEventData pointerEventData)
     {
         Image droppedImage = pointerEventData.pointerDrag.GetComponent<Image>();
+        if (droppedImage.sprite == null)
+        {
+            return;
+        }
         iconImage.sprite = droppedImage.sprite;
 
         // ドロップする予定の画像サイズを取得

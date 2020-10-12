@@ -36,22 +36,22 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             position += new Vector3(0.0f, 1.0f, 0.0f) * speed;
-            animator.Play("up", 0);
+            animator.Play("Up", 0);
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
             position += new Vector3(0.0f, -1.0f, 0.0f) * speed;
-            animator.Play("down", 0);
+            animator.Play("Down", 0);
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
             position += new Vector3(-1.0f, 0.0f, 0.0f) * speed;
-            animator.Play("trunLeft", 0);
+            animator.Play("TrunLeft", 0);
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
             position += new Vector3(1.0f, 0.0f, 0.0f) * speed;
-            animator.Play("trunRight", 0);
+            animator.Play("TrunRight", 0);
         }
 
 
@@ -59,37 +59,57 @@ public class PlayerManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             position += new Vector3(0.0f, 1.0f, 0.0f) * speed;
-            animator.Play("up", 0);
+            animator.Play("Up", 0);
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             position += new Vector3(0.0f, -1.0f, 0.0f) * speed;
-            animator.Play("down", 0);
+            animator.Play("Down", 0);
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             position += new Vector3(-1.0f, 0.0f, 0.0f) * speed;
-            animator.Play("trunLeft", 0);
+            animator.Play("TrunLeft", 0);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             position += new Vector3(1.0f, 0.0f, 0.0f) * speed;
-            animator.Play("trunRight", 0);
+            animator.Play("TrunRight", 0);
         }
 
         transform.position = position;
     }
 
-    public void PlayerMove()
+    IEnumerator PlayerMove()
     {
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 4; i++)
         {
+            string nowCmd = cmdList[i];
+            if (nowCmd == "Attack")
+            {
+                
+            }
+            else if (nowCmd == "Walk")
+            {
 
+            }
+            else if (nowCmd == "TrunRight")
+            {
+                animator.Play("TrunRight", 0);
+
+
+            }
+            else if (nowCmd == "TrunLeft")
+            {
+                animator.Play("TrunLeft", 0);
+            }
+
+            // ここで一旦待つ
+            yield return new WaitForSeconds(1.0f);
         }
     }
 
-
-    private void OnCollisionEnter2D(Collision2D collision)
+        private void OnCollisionEnter2D(Collision2D collision)
     {
         // 宝箱にぶつかっていたら
         if (collision.transform.tag == "box")
@@ -108,7 +128,10 @@ public class PlayerManager : MonoBehaviour
             // print(cmd);
             print(i+1 + "番目：" + cmdList[i]);
         }
-        print(cmdList.Count);
+        // print(cmdList.Count);
+
+        // 受け取ったコマンド情報を元にプレイヤーを動かす
+        StartCoroutine(PlayerMove());
     }
 
 }
