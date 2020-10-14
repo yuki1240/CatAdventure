@@ -128,8 +128,10 @@ public class PlayerManager : MonoBehaviour
             // print(cmd);
             print(i+1 + "番目：" + cmdList[i]);
         }
+        // print(cmdList.Count);
 
         // 受け取ったコマンド情報を元にプレイヤーを動かす
         StartCoroutine(PlayerMove());
     }
+
 }
