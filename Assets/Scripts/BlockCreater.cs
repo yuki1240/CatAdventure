@@ -6,16 +6,15 @@ public class BlockCreater : MonoBehaviour
 {
     public GameObject block;
     public Vector3 startPosition = Vector3.zero;
-    public int blockCountX = 7; // 必ず5以上の奇数
-    public int blockCountY = 7; // 必ず5以上の奇数
+    public int blockCountX = 9; // 必ず5以上の奇数
+    public int blockCountY = 9; // 必ず5以上の奇数
 
     bool[,] mapInfo = null;
 
     void Start()
     {
         MapGenerator();
-        blockGenerator();
-        print("ok");
+        blockGenerator();    
     }
 
     void MapGenerator()
