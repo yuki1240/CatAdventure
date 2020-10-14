@@ -88,26 +88,25 @@ public class PlayerManager : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             string nowCmd = cmdList[i];
+            string plaeyInfo = GetPlayerInfo();
+
+            // 攻撃
             if (nowCmd == "Attack")
             {
                 
             }
             else if (nowCmd == "Walk")
             {
-                if (true)
-                {
-                    transform.position += new Vector3(-0.68f, 0.0f, 0.0f);
-                }
-            }
+                            }
+            // 右回転
             else if (nowCmd == "TrunRight")
             {
-                animator.Play("TrunRight", 0);
-
-
+                
             }
+            // 左回転
             else if (nowCmd == "TrunLeft")
             {
-                animator.Play("TrunLeft", 0);
+                
             }
 
             // ここで一旦待つ
@@ -115,14 +114,32 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+    string GetPlayerInfo()
     {
-        // 宝箱にぶつかっていたら
-        if (collision.transform.tag == "box")
+        // 前を向いているとき
+        if (playerImage.sprite.name == "Player_10")
         {
-            // BoxCollisionFlag = true;
+            return "front";
         }
+        // 後ろを向いているとき
+        else if (playerImage.sprite.name == "Player_1")
+        {
+            return "back";
+        }
+        // 右を向いているとき
+        else if (playerImage.sprite.name == "Player_4")
+        {
+            return "Right";
+        }
+        // 左を向いているとき
+        else if (playerImage.sprite.name == "Player_7")
+        {
+            return "Left";
+        }
+
+        return "";
     }
+
 
     public void ReceaveCmd(List<string> _cmdList)
     {
