@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class PlayerManager : MonoBehaviour
 {
     public float speed = 1.0f;
-    public Image playerImage;
+
+    SpriteRenderer playerImage;
 
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
@@ -18,7 +19,7 @@ public class PlayerManager : MonoBehaviour
     {
         animator = this.transform.GetComponent<Animator>();
         rb = this.transform.GetComponent<Rigidbody2D>();
-        playerImage = this.transform.GetComponent<Image>();
+        playerImage = this.transform.GetComponent<SpriteRenderer>();
 
     }
 
