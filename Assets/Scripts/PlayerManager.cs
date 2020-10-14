@@ -94,22 +94,87 @@ public class PlayerManager : MonoBehaviour
             // 攻撃
             if (nowCmd == "Attack")
             {
-                
+
             }
             else if (nowCmd == "Walk")
             {
-                            }
+                print("Walk");
+                switch (plaeyInfo)
+                {
+                    case "front":
+                        print("front");
+                        animator.Play("Walk_front");
+                        transform.position += new Vector3(0.0f, 0.65f, 0.0f);
+                        break;
+
+                    case "back":
+                        print("back");
+                        animator.Play("Walk_back");
+                        transform.position += new Vector3(0.0f, -0.65f, 0.0f);
+                        break;
+
+                    case "right":
+                        print("right");
+                        animator.Play("Walk_right");
+                        transform.position += new Vector3(-0.65f, 0.0f, 0.0f);
+                        break;
+
+                    case "felst":
+                        print("left");
+                        animator.Play("Walk_left");
+                        transform.position += new Vector3(0.65f, 0.0f, 0.0f);
+                        break;
+                }
+            }
+
             // 右回転
             else if (nowCmd == "TrunRight")
             {
-                
+                print("TrunRight");
+                switch (plaeyInfo)
+                {
+                    case "front":
+                        animator.Play("Trun_left");
+                        break;
+
+                    case "back":
+                        animator.Play("Trun_left");
+                        break;
+
+                    case "right":
+                        animator.Play("Trun_left");
+                        break;
+
+                    case "felst":
+                        animator.Play("Trun_left");
+                        break;
+                }
             }
+
             // 左回転
             else if (nowCmd == "TrunLeft")
             {
-                
-            }
+                print("TrunLeft");
+                switch (plaeyInfo)
+                {
+                    case "front":
 
+                        break;
+
+                    case "back":
+
+                        break;
+
+                    case "right":
+
+                        break;
+
+                    case "felst":
+
+                        break;
+
+                }
+            }
             // ここで一旦待つ
             yield return new WaitForSeconds(1.0f);
         }

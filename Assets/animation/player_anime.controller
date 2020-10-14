@@ -33,7 +33,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Trun Right
+  m_Name: Trun_Right
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -59,7 +59,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Trun Left
+  m_Name: Trun_Left
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -85,7 +85,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Wolk_left
+  m_Name: Walk_left
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -152,7 +152,7 @@ AnimatorStateMachine:
     m_Position: {x: 310, y: 130, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8005718178547576512}
-    m_Position: {x: -220, y: 130, z: 0}
+    m_Position: {x: -240, y: 130, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3004571712235745809}
     m_Position: {x: -220, y: 240, z: 0}
@@ -202,7 +202,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Wolk_right
+  m_Name: Walk_right
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -228,7 +228,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Wolk_front
+  m_Name: Walk_front
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -254,7 +254,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Wolk_back
+  m_Name: Walk_back
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
