@@ -3,41 +3,41 @@ guid: b0111d74c81c933449fb9bdc9f431f2d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8954689485251045137
-    second: pipo-charachip010b_0
+      213: -2311659948842064771
+    second: Player_0
   - first:
-      213: 6921083200324554475
-    second: pipo-charachip010b_1
+      213: 7364682651488144517
+    second: Player_1
   - first:
-      213: -8763369627322368448
-    second: pipo-charachip010b_2
+      213: -6287787046888575383
+    second: Player_2
   - first:
-      213: 5719546790919099225
-    second: pipo-charachip010b_3
+      213: -1182821291677670348
+    second: Player_3
   - first:
-      213: -7185327186661263872
-    second: pipo-charachip010b_4
+      213: -4709456396536258026
+    second: Player_4
   - first:
-      213: -3307182841963333760
-    second: pipo-charachip010b_5
+      213: -4529042392078601758
+    second: Player_5
   - first:
-      213: 1173158087525158357
-    second: pipo-charachip010b_6
+      213: -7446026091647042388
+    second: Player_6
   - first:
-      213: 5826259237915874148
-    second: pipo-charachip010b_7
+      213: 5938012242645255967
+    second: Player_7
   - first:
-      213: 2529711046298056856
-    second: pipo-charachip010b_8
+      213: -4245738604243887485
+    second: Player_8
   - first:
-      213: -1860931343667874995
-    second: pipo-charachip010b_9
+      213: 2473453845335418800
+    second: Player_9
   - first:
-      213: -3166951253726621379
-    second: pipo-charachip010b_10
+      213: -3287367053296241113
+    second: Player_10
   - first:
-      213: 6097097510696083566
-    second: pipo-charachip010b_11
+      213: -5319882733741912588
+    second: Player_11
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -135,7 +135,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pipo-charachip010b_0
+      name: Player_0
       rect:
         serializedVersion: 2
         x: 9
@@ -149,14 +149,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fe89fad6b5d8ab380800000000000000
-      internalID: -8954689485251045137
+      spriteID: d7465c336855befd0800000000000000
+      internalID: -2311659948842064771
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_1
+      name: Player_1
       rect:
         serializedVersion: 2
         x: 41
@@ -170,14 +170,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: beec4405080ac0060800000000000000
-      internalID: 6921083200324554475
+      spriteID: 58cce6d0adb943660800000000000000
+      internalID: 7364682651488144517
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_2
+      name: Player_2
       rect:
         serializedVersion: 2
         x: 73
@@ -191,14 +191,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 04eb00811c1426680800000000000000
-      internalID: -8763369627322368448
+      spriteID: 96e67e6befa4db8a0800000000000000
+      internalID: -6287787046888575383
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_3
+      name: Player_3
       rect:
         serializedVersion: 2
         x: 2
@@ -212,14 +212,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 95355fcb089ef5f40800000000000000
-      internalID: 5719546790919099225
+      spriteID: 434a8c45d46c59fe0800000000000000
+      internalID: -1182821291677670348
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_4
+      name: Player_4
       rect:
         serializedVersion: 2
         x: 34
@@ -233,14 +233,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 00639144ef6984c90800000000000000
-      internalID: -7185327186661263872
+      spriteID: 612e34feb56a4aeb0800000000000000
+      internalID: -4709456396536258026
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_5
+      name: Player_5
       rect:
         serializedVersion: 2
         x: 66
@@ -254,14 +254,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 08732893ab68a12d0800000000000000
-      internalID: -3307182841963333760
+      spriteID: 2e13877b0fb9521c0800000000000000
+      internalID: -4529042392078601758
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_6
+      name: Player_6
       rect:
         serializedVersion: 2
         x: 2
@@ -275,14 +275,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5dd4050a015e74010800000000000000
-      internalID: 1173158087525158357
+      spriteID: cac761b68b66aa890800000000000000
+      internalID: -7446026091647042388
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_7
+      name: Player_7
       rect:
         serializedVersion: 2
         x: 35
@@ -296,14 +296,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 463505578e70bd050800000000000000
-      internalID: 5826259237915874148
+      spriteID: f178aca7cae086250800000000000000
+      internalID: 5938012242645255967
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_8
+      name: Player_8
       rect:
         serializedVersion: 2
         x: 65
@@ -317,14 +317,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8983afa2bc65b1320800000000000000
-      internalID: 2529711046298056856
+      spriteID: 38a51ecfb3b1415c0800000000000000
+      internalID: -4245738604243887485
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_9
+      name: Player_9
       rect:
         serializedVersion: 2
         x: 9
@@ -338,14 +338,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d4339457dc4ac26e0800000000000000
-      internalID: -1860931343667874995
+      spriteID: 0b7aa8bda29735220800000000000000
+      internalID: 2473453845335418800
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_10
+      name: Player_10
       rect:
         serializedVersion: 2
         x: 41
@@ -359,14 +359,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d3195ac2d9abc04d0800000000000000
-      internalID: -3166951253726621379
+      spriteID: 72674fd051de062d0800000000000000
+      internalID: -3287367053296241113
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pipo-charachip010b_11
+      name: Player_11
       rect:
         serializedVersion: 2
         x: 73
@@ -380,8 +380,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e6065f5d1ed3d9450800000000000000
-      internalID: 6097097510696083566
+      spriteID: 4fd4490f6dafb26b0800000000000000
+      internalID: -5319882733741912588
       vertices: []
       indices: 
       edges: []
