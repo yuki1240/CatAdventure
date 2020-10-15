@@ -6726,7 +6726,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.5
-  playerImage: {fileID: 0}
+  frontImage: {fileID: -3287367053296241113, guid: b0111d74c81c933449fb9bdc9f431f2d,
+    type: 3}
+  backImage: {fileID: 7364682651488144517, guid: b0111d74c81c933449fb9bdc9f431f2d,
+    type: 3}
+  rightImage: {fileID: 5938012242645255967, guid: b0111d74c81c933449fb9bdc9f431f2d,
+    type: 3}
+  leftImage: {fileID: -4709456396536258026, guid: b0111d74c81c933449fb9bdc9f431f2d,
+    type: 3}
 --- !u!95 &930794117
 Animator:
   serializedVersion: 3
@@ -6735,7 +6742,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 930794114}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 7e42a89888eb0d041b9a88d9aa32a536, type: 2}
   m_CullingMode: 0
@@ -6821,7 +6828,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.15, y: 0.27}
+  m_Size: {x: 0.28, y: 0.28}
   m_EdgeRadius: 0
 --- !u!50 &930794120
 Rigidbody2D:
@@ -6842,7 +6849,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!1 &930913132
 GameObject:

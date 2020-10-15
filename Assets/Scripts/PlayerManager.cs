@@ -8,7 +8,12 @@ public class PlayerManager : MonoBehaviour
     public float speed = 1.0f;
 
     SpriteRenderer playerImage;
-    public Sprite[] playerImages = new Sprite[4];
+
+    public Sprite frontImage;
+    public Sprite backImage;
+    public Sprite rightImage;
+    public Sprite leftImage;
+
 
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
@@ -90,7 +95,6 @@ public class PlayerManager : MonoBehaviour
         {
             string nowCmd = cmdList[i];
             string plaeyInfo = GetPlayerInfo();
-            print(plaeyInfo);
 
             // 攻撃
             if (nowCmd == "Attack")
@@ -100,30 +104,31 @@ public class PlayerManager : MonoBehaviour
             else if (nowCmd == "Walk")
             {
                 print("Walk");
+                Vector3 currentPosition = transform.position;
                 switch (plaeyInfo)
                 {
                     case "front":
                         print("front");
                         animator.Play("Walk_front");
-                        transform.position += new Vector3(0.0f, 0.65f, 0.0f);
+                        rb.MovePosition(currentPosition + new Vector3(0.0f, 0.65f, 0.0f));
                         break;
 
                     case "back":
                         print("back");
                         animator.Play("Walk_back");
-                        transform.position += new Vector3(0.0f, -0.65f, 0.0f);
+                        rb.MovePosition(currentPosition + new Vector3(0.0f, -0.65f, 0.0f));
                         break;
 
                     case "right":
                         print("right");
                         animator.Play("Walk_right");
-                        transform.position += new Vector3(-0.65f, 0.0f, 0.0f);
+                        rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
                         break;
 
                     case "left":
                         print("left");
                         animator.Play("Walk_left");
-                        transform.position += new Vector3(0.65f, 0.0f, 0.0f);
+                        rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
                         break;
                 }
             }
@@ -132,52 +137,68 @@ public class PlayerManager : MonoBehaviour
             else if (nowCmd == "TrunRight")
             {
                 print("TrunRight");
-                print("plaeyInfo : " + plaeyInfo);
-                print("playerImage.name_satrt : " + playerImage.sprite.name);
-                print("playerImages[1] : " + playerImages[1]);
-                Debug.Log("");
+                Vector3 currentPosition = transform.position;
                 switch (plaeyInfo)
                 {
                     case "front":
-                        playerImage.sprite = playerImages[2];
+                        print("front");
+                        // 右向きの画像に変えたい
+                        playerImage.sprite = rightImage;
+
+                        // rb.MovePosition(currentPosition + new Vector3(0.0f, 0.65f, 0.0f));
                         break;
 
                     case "back":
-                        playerImage.sprite = playerImages[4];
+                        playerImage.sprite = leftImage;
+                        print("back");
+
+                        // rb.MovePosition(currentPosition + new Vector3(0.0f, -0.65f, 0.0f));
                         break;
 
                     case "right":
-                        playerImage.sprite = playerImages[3];
+                        playerImage.sprite = backImage;
+                        print("right");
+
+                        // rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
                         break;
 
                     case "left":
-                        playerImage.sprite = playerImages[0];
+                        print("left");
+                        playerImage.sprite = frontImage;
+                        // rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
                         break;
                 }
-                print("playerImage.name_end : " + playerImage.sprite.name);
             }
 
             // 左回転
             else if (nowCmd == "TrunLeft")
             {
                 print("TrunLeft");
-                print(plaeyInfo);
+                Vector3 currentPosition = transform.position;
                 switch (plaeyInfo)
                 {
                     case "front":
-                        playerImage.sprite = playerImages[3];
+                        print("front");
+                        playerImage.sprite = leftImage;
+                        // rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
                         break;
 
                     case "back":
-                        playerImage.sprite = playerImages[4];
+                        print("back");
+                        playerImage.sprite = rightImage;
+                        // rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
                         break;
 
                     case "right":
-                        playerImage.sprite = playerImages[3];
+                        print("right");
+                        playerImage.sprite = frontImage;
+                        // rb.MovePosition(currentPosition + new Vector3(0.0f, -0.65f, 0.0f));
                         break;
 
                     case "left":
-                        playerImage.sprite = playerImages[1];
+                        print("left");
+                        playerImage.sprite = backImage;
+                        // rb.MovePosition(currentPosition + new Vector3(0.0f, 0.65f, 0.0f));
                         break;
                 }
             }
@@ -189,22 +210,22 @@ public class PlayerManager : MonoBehaviour
     string GetPlayerInfo()
     {
         // 前を向いているとき
-        if (playerImage.sprite.name == "Player_10")
+        if (playerImage.sprite.name == frontImage.name)
         {
             return "front";
         }
         // 後ろを向いているとき
-        else if (playerImage.sprite.name == "Player_1")
+        else if (playerImage.sprite.name == backImage.name)
         {
             return "back";
         }
         // 右を向いているとき
-        else if (playerImage.sprite.name == "Player_4")
+        else if (playerImage.sprite.name == rightImage.name)
         {
             return "right";
         }
         // 左を向いているとき
-        else if (playerImage.sprite.name == "Player_7")
+        else if (playerImage.sprite.name == leftImage.name)
         {
             return "left";
         }
