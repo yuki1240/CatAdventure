@@ -10,31 +10,16 @@ public class GameManager : MonoBehaviour
 
     public PlayerManager playerSclipt;
 
+    // セットされたコマンド画像を入れておく配列
     Image[] dropImageChild = new Image[20];
 
+    // コマンドの情報を保持する配列
     [System.NonSerialized]
     public List<string> cmdList = new List<string>();
-
-    GameObject clickedGameObject;
 
     void Update()
     {
 
-        if (Input.GetMouseButtonDown(0))
-        {
-
-            clickedGameObject = null;
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit2d = Physics2D.Raycast((Vector2)ray.origin, (Vector2)ray.direction);
-
-            if (hit2d)
-            {
-                clickedGameObject = hit2d.transform.gameObject;
-            }
-
-            // print(clickedGameObject);
-        }
     }
 
     public void RunButtonClick()
@@ -64,7 +49,7 @@ public class GameManager : MonoBehaviour
             }
 
         }
-        // 一連のコマンド情報をプレイヤーに渡す
+        // 一連のコマンド情報を猫に渡す
         playerSclipt.ReceaveCmd(cmdList);
     }
 

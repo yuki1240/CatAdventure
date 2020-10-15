@@ -5,15 +5,17 @@ using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
+    // 猫の移動速度
     public float speed = 1.0f;
 
+    // 今の状態の猫画像
     SpriteRenderer playerImage;
 
+    // それぞれの向きの猫画像
     public Sprite frontImage;
     public Sprite backImage;
     public Sprite rightImage;
     public Sprite leftImage;
-
 
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
@@ -30,62 +32,7 @@ public class PlayerManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        //// 現在の座標を取得
-        //Vector3 position = transform.position;
 
-        //// 方向転換するか？
-        //if (Input.GetKeyDown(KeyCode.W))
-        //{
-        //    position += new Vector3(0.0f, 1.0f, 0.0f) * speed;
-        //    animator.Play("Up", 0);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.S))
-        //{
-        //    position += new Vector3(0.0f, -1.0f, 0.0f) * speed;
-        //    animator.Play("Down", 0);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.A))
-        //{
-        //    position += new Vector3(-1.0f, 0.0f, 0.0f) * speed;
-        //    animator.Play("TrunLeft", 0);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.D))
-        //{
-        //    position += new Vector3(1.0f, 0.0f, 0.0f) * speed;
-        //    animator.Play("TrunRight", 0);
-        //}
-
-
-        //// 移動（キー操作受付部分）
-        //if (Input.GetKeyDown(KeyCode.UpArrow))
-        //{
-        //    position += new Vector3(0.0f, 1.0f, 0.0f) * speed;
-        //    animator.Play("Up", 0);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.DownArrow))
-        //{
-        //    position += new Vector3(0.0f, -1.0f, 0.0f) * speed;
-        //    animator.Play("Down", 0);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        //{
-        //    position += new Vector3(-1.0f, 0.0f, 0.0f) * speed;
-        //    animator.Play("TrunLeft", 0);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.RightArrow))
-        //{
-        //    position += new Vector3(1.0f, 0.0f, 0.0f) * speed;
-        //    animator.Play("TrunRight", 0);
-        //}
-
-        //transform.position = position;
-
-
-        //if (flag)
-        //{
-        //    float present_Location = (Time.time) / 1.0f;
-        //    transform.position = Vector3.Lerp(new Vector3(1.88f, 0.27f, 0.0f), new Vector3(0.0f, 0.27f, 0.0f), present_Location);
-        //}
     }
 
     IEnumerator PlayerMove()
@@ -103,8 +50,8 @@ public class PlayerManager : MonoBehaviour
             }
             else if (nowCmd == "Walk")
             {
-                print("Walk");
                 Vector3 currentPosition = transform.position;
+
                 switch (plaeyInfo)
                 {
                     case "front":
@@ -136,36 +83,24 @@ public class PlayerManager : MonoBehaviour
             // 右回転
             else if (nowCmd == "TrunRight")
             {
-                print("TrunRight");
                 Vector3 currentPosition = transform.position;
+
                 switch (plaeyInfo)
                 {
                     case "front":
-                        print("front");
-                        // 右向きの画像に変えたい
                         playerImage.sprite = rightImage;
-
-                        // rb.MovePosition(currentPosition + new Vector3(0.0f, 0.65f, 0.0f));
                         break;
 
                     case "back":
                         playerImage.sprite = leftImage;
-                        print("back");
-
-                        // rb.MovePosition(currentPosition + new Vector3(0.0f, -0.65f, 0.0f));
                         break;
 
                     case "right":
                         playerImage.sprite = backImage;
-                        print("right");
-
-                        // rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
                         break;
 
                     case "left":
-                        print("left");
                         playerImage.sprite = frontImage;
-                        // rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
                         break;
                 }
             }
@@ -173,40 +108,33 @@ public class PlayerManager : MonoBehaviour
             // 左回転
             else if (nowCmd == "TrunLeft")
             {
-                print("TrunLeft");
                 Vector3 currentPosition = transform.position;
+
                 switch (plaeyInfo)
                 {
                     case "front":
-                        print("front");
                         playerImage.sprite = leftImage;
-                        // rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
                         break;
 
                     case "back":
-                        print("back");
                         playerImage.sprite = rightImage;
-                        // rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
                         break;
 
                     case "right":
-                        print("right");
                         playerImage.sprite = frontImage;
-                        // rb.MovePosition(currentPosition + new Vector3(0.0f, -0.65f, 0.0f));
                         break;
 
                     case "left":
-                        print("left");
                         playerImage.sprite = backImage;
-                        // rb.MovePosition(currentPosition + new Vector3(0.0f, 0.65f, 0.0f));
                         break;
                 }
             }
-            // ここで一旦待つ
+            // 1秒間のスリープ処理
             yield return new WaitForSeconds(1.0f);
         }
     }
 
+    // 今の猫の向きを取得
     string GetPlayerInfo()
     {
         // 前を向いているとき
@@ -233,19 +161,17 @@ public class PlayerManager : MonoBehaviour
         return "";
     }
 
-
+    // コマンド情報をGameManagerから受け取るための処理
     public void ReceaveCmd(List<string> _cmdList)
     {
         cmdList = _cmdList;
 
-        // foreach (string cmd in cmdList)
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < cmdList.Count; i++)
         {
-            // print(cmd);
             print(i+1 + "番目：" + cmdList[i]);
         }
 
-        // 受け取ったコマンド情報を元にプレイヤーを動かす
+        // 受け取ったコマンド情報を元に猫を動かす
         StartCoroutine(PlayerMove());
     }
 }
