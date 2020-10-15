@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
     public float speed = 1.0f;
 
     SpriteRenderer playerImage;
+    public Sprite[] playerImages = new Sprite[4];
 
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
@@ -20,7 +21,6 @@ public class PlayerManager : MonoBehaviour
         animator = this.transform.GetComponent<Animator>();
         rb = this.transform.GetComponent<Rigidbody2D>();
         playerImage = this.transform.GetComponent<SpriteRenderer>();
-
     }
 
     void FixedUpdate()
@@ -90,6 +90,7 @@ public class PlayerManager : MonoBehaviour
         {
             string nowCmd = cmdList[i];
             string plaeyInfo = GetPlayerInfo();
+            print(plaeyInfo);
 
             // 攻撃
             if (nowCmd == "Attack")
@@ -119,7 +120,7 @@ public class PlayerManager : MonoBehaviour
                         transform.position += new Vector3(-0.65f, 0.0f, 0.0f);
                         break;
 
-                    case "felst":
+                    case "left":
                         print("left");
                         animator.Play("Walk_left");
                         transform.position += new Vector3(0.65f, 0.0f, 0.0f);
@@ -131,48 +132,53 @@ public class PlayerManager : MonoBehaviour
             else if (nowCmd == "TrunRight")
             {
                 print("TrunRight");
+                print("plaeyInfo : " + plaeyInfo);
+                print("playerImage.name_satrt : " + playerImage.sprite.name);
+                print("playerImages[1] : " + playerImages[1]);
+                Debug.Log("");
                 switch (plaeyInfo)
                 {
                     case "front":
-                        animator.Play("Trun_left");
+                        playerImage.sprite = playerImages[2];
                         break;
 
                     case "back":
-                        animator.Play("Trun_left");
+                        playerImage.sprite = playerImages[4];
                         break;
 
                     case "right":
-                        animator.Play("Trun_left");
+                        playerImage.sprite = playerImages[3];
                         break;
 
-                    case "felst":
-                        animator.Play("Trun_left");
+                    case "left":
+                        playerImage.sprite = playerImages[0];
                         break;
                 }
+                print("playerImage.name_end : " + playerImage.sprite.name);
             }
 
             // 左回転
             else if (nowCmd == "TrunLeft")
             {
                 print("TrunLeft");
+                print(plaeyInfo);
                 switch (plaeyInfo)
                 {
                     case "front":
-
+                        playerImage.sprite = playerImages[3];
                         break;
 
                     case "back":
-
+                        playerImage.sprite = playerImages[4];
                         break;
 
                     case "right":
-
+                        playerImage.sprite = playerImages[3];
                         break;
 
-                    case "felst":
-
+                    case "left":
+                        playerImage.sprite = playerImages[1];
                         break;
-
                 }
             }
             // ここで一旦待つ
@@ -195,12 +201,12 @@ public class PlayerManager : MonoBehaviour
         // 右を向いているとき
         else if (playerImage.sprite.name == "Player_4")
         {
-            return "Right";
+            return "right";
         }
         // 左を向いているとき
         else if (playerImage.sprite.name == "Player_7")
         {
-            return "Left";
+            return "left";
         }
 
         return "";
