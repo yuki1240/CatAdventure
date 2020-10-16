@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour
     public GameObject player;
     public GameObject enemy;
 
+    public GameObject block;
+
+    public BlockCreater blockCreater;
+
     public PlayerManager playerSclipt;
 
     // セットされたコマンド画像を入れておく配列
@@ -86,16 +90,18 @@ public class GameManager : MonoBehaviour
 
         Vector3[,] pos = new Vector3[BlockCreater.blockCountX, BlockCreater.blockCountY];
 
+        Vector3 startPos = blockCreater.startPosition;
         for (int y = 0; y < BlockCreater.blockCountY; y++)
         {
-            float posX = -1.88f;
-            float posY = 4.05f;
+            // 左端の座標
+            startPos.x = blockCreater.startPosition.x;
+
             for (int x = 0; x < BlockCreater.blockCountX; x++)
             {
-                pos[x, y] = new Vector3(posX, posY, 0.0f);
-                posX += 0.43f;
+                pos[x, y] = new Vector3(startPos.x, startPos.y, 0.0f);
+                startPos.x += block.transform.localScale.x;
             }
-            posY += 0.54f;
+            startPos.y += block.transform.localScale.y;
         }
 
         while (true){

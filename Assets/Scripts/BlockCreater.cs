@@ -31,6 +31,7 @@ public class BlockCreater : MonoBehaviour
                 }
                 mapInfo[x, y] = blockFlag;
             }
+            
         }
 
         // 棒を立て、倒す
