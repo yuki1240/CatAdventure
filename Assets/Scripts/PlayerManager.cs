@@ -17,6 +17,10 @@ public class PlayerManager : MonoBehaviour
     public Sprite rightImage;
     public Sprite leftImage;
 
+    public Sprite attackImage;
+
+    public GameObject enemy;
+
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
 
@@ -32,7 +36,7 @@ public class PlayerManager : MonoBehaviour
 
     void FixedUpdate()
     {
-
+        Debug.DrawRay(transform.position, transform.position + new Vector3(0.0f, 10f, 0.0f), Color.blue, 10, false);
     }
 
     IEnumerator PlayerMove()
@@ -45,8 +49,38 @@ public class PlayerManager : MonoBehaviour
 
             // 攻撃
             if (nowCmd == "Attack")
-            {
+            { 
+                Vector3 nowPos = transform.position;
 
+                switch (plaeyInfo)
+                {
+                    
+
+                    case "front":
+                        print("今の向き : " + "front");
+                        
+                        RaycastHit2D HitObject = Physics2D.Raycast(nowPos, -Vector2.up);
+
+                        print(HitObject.transform.name);
+
+                        if (HitObject.transform.tag == "Enemy")
+                        {
+                            enemy.SetActive(false);
+                        }
+                        break;
+
+                    case "back":
+                        
+                        break;
+
+                    case "right":
+                        
+                        break;
+
+                    case "left":
+                        
+                        break;
+                }
             }
             else if (nowCmd == "Walk")
             {
@@ -56,25 +90,25 @@ public class PlayerManager : MonoBehaviour
                 {
                     case "front":
                         print("front");
-                        animator.Play("Walk_front");
+                        // animator.Play("Walk_front");
                         rb.MovePosition(currentPosition + new Vector3(0.0f, 0.65f, 0.0f));
                         break;
 
                     case "back":
                         print("back");
-                        animator.Play("Walk_back");
+                        // animator.Play("Walk_back");
                         rb.MovePosition(currentPosition + new Vector3(0.0f, -0.65f, 0.0f));
                         break;
 
                     case "right":
                         print("right");
-                        animator.Play("Walk_right");
+                        // animator.Play("Walk_right");
                         rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
                         break;
 
                     case "left":
                         print("left");
-                        animator.Play("Walk_left");
+                        // animator.Play("Walk_left");
                         rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
                         break;
                 }
@@ -168,7 +202,7 @@ public class PlayerManager : MonoBehaviour
 
         for (int i = 0; i < cmdList.Count; i++)
         {
-            print(i+1 + "番目：" + cmdList[i]);
+            // print(i+1 + "番目：" + cmdList[i]);
         }
 
         // 受け取ったコマンド情報を元に猫を動かす
