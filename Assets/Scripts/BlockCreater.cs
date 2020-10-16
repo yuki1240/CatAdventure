@@ -6,10 +6,10 @@ public class BlockCreater : MonoBehaviour
 {
     public GameObject block;
     public Vector3 startPosition = Vector3.zero;
-    public int blockCountX = 9; // 必ず5以上の奇数
-    public int blockCountY = 9; // 必ず5以上の奇数
+    public static int blockCountX = 9; // 必ず5以上の奇数
+    public static int blockCountY = 9; // 必ず5以上の奇数
 
-    bool[,] mapInfo = null;
+    public static bool[,] mapInfo = null;
 
     void Start()
     {
@@ -30,7 +30,6 @@ public class BlockCreater : MonoBehaviour
                     blockFlag = true; // 壁
                 }
                 mapInfo[x, y] = blockFlag;
-                // mapInfo[x, y] = Random.Range(0, 2) == 1;
             }
         }
 

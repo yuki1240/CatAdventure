@@ -5233,8 +5233,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   block: {fileID: 952633608720844836, guid: c184f2a05388e0d4a87e99cc435e5f6b, type: 3}
   startPosition: {x: -2.52, y: -0.36, z: 0}
-  blockCountX: 9
-  blockCountY: 9
 --- !u!4 &703859239
 Transform:
   m_ObjectHideFlags: 0
@@ -6817,7 +6815,7 @@ MonoBehaviour:
   leftImage: {fileID: -4709456396536258026, guid: b0111d74c81c933449fb9bdc9f431f2d,
     type: 3}
   attackImage: {fileID: 21300000, guid: c885495f61c3f6d45bd1e704a62ed977, type: 3}
-  enemy: {fileID: 930794114}
+  enemy: {fileID: 1664331965}
 --- !u!95 &930794117
 Animator:
   serializedVersion: 3
@@ -16687,6 +16685,7 @@ MonoBehaviour:
   runButton: {fileID: 517049931}
   box: {fileID: 112098911}
   player: {fileID: 930794114}
+  enemy: {fileID: 1664331965}
   playerSclipt: {fileID: 930794116}
 --- !u!1 &2030276065
 GameObject:

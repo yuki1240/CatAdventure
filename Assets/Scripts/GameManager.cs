@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public GameObject runButton;
     public GameObject box;
     public GameObject player;
+    public GameObject enemy;
 
     public PlayerManager playerSclipt;
 
@@ -32,6 +33,8 @@ public class GameManager : MonoBehaviour
 
         box.transform.position = setStartPosition();
         player.transform.position = setStartPosition();
+        enemy.transform.position = enemyPositon();
+        print("最終的なEnemyのposition : " + enemy.transform.position);
     }
 
     void Update()
@@ -44,19 +47,20 @@ public class GameManager : MonoBehaviour
         Vector3 pos = Vector3.zero;
 
         // NumListのシャッフル
-        NumList = NumList.OrderBy(a => Guid.NewGuid()).ToList();
+        // NumList = NumList.OrderBy(a => Guid.NewGuid()).ToList();
 
         switch (NumList[0])
         {
             case 0:
-                // 右上の出現座標を返す
-                pos = new Vector3(1.88f, 4.05f, 0.0f);
+                // 左上の出現座標を返す
+                pos = new Vector3(-1.88f, 4.05f, 0.0f);
                 NumList[0] = UnityEngine.Random.Range(0, 3);
                 NumList.RemoveAt(0);
                 return pos;
+
             case 1:
-                // 左上の出現座標を返す
-                pos = new Vector3(-1.88f, 4.05f, 0.0f);
+                // 右上の出現座標を返す
+                pos = new Vector3(1.88f, 4.05f, 0.0f);
                 NumList[0] = UnityEngine.Random.Range(0, 3);
                 NumList.RemoveAt(0);
                 return pos;
@@ -67,7 +71,46 @@ public class GameManager : MonoBehaviour
                 NumList.RemoveAt(0);
                 return pos;
         }
-        return pos;
+        return Vector3.zero;
+    }
+
+    Vector3 enemyPositon()
+    {
+        Vector3 boxPos = box.transform.position;
+        Vector3 playerPos = player.transform.position;
+
+        int randX = UnityEngine.Random.Range(0, BlockCreater.blockCountX);
+        int randY = UnityEngine.Random.Range(0, BlockCreater.blockCountY);
+
+        Vector3[,] pos = new Vector3[BlockCreater.blockCountX, BlockCreater.blockCountY];
+
+        for (int y = 0; y < BlockCreater.blockCountY; y++)
+        {
+            float posX = -1.88f;
+            float posY = 4.05f;
+            for (int x = 0; x < BlockCreater.blockCountX; x++)
+            {
+                pos[x, y] = new Vector3(posX, posY, 0.0f);
+                posX += 0.43f;
+            }
+            posY += 0.54f;
+        }
+
+        while (true){
+            print("位置探し");
+            if (BlockCreater.mapInfo[randX, randY] == false)
+            {
+                print("randX : " + randX);
+                print("randY : " + randY);
+                print("pos[" + randX + ", " + randY + "] : " + pos[randX, randY]);
+                return pos[randX, randY];
+            }
+            else
+            {
+                randX = UnityEngine.Random.Range(0, BlockCreater.blockCountX);
+                randY = UnityEngine.Random.Range(0, BlockCreater.blockCountY);
+            }
+        }
     }
 
     public void RunButtonClick()
