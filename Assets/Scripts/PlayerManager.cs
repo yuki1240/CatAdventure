@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -42,7 +43,7 @@ public class PlayerManager : MonoBehaviour
     IEnumerator PlayerMove()
     {
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < cmdList.Count; i++)
         {
             string nowCmd = cmdList[i];
             string plaeyInfo = GetPlayerInfo();
@@ -103,13 +104,13 @@ public class PlayerManager : MonoBehaviour
                     case "right":
                         print("right");
                         // animator.Play("Walk_right");
-                        rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
                         break;
 
                     case "left":
                         print("left");
                         // animator.Play("Walk_left");
-                        rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
                         break;
                 }
             }
@@ -207,5 +208,13 @@ public class PlayerManager : MonoBehaviour
 
         // 受け取ったコマンド情報を元に猫を動かす
         StartCoroutine(PlayerMove());
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.tag == "Box")
+        {
+            print("Clear!");
+        }
     }
 }

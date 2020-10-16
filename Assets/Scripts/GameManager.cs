@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
 
     List<int> NumList = new List<int>();
 
+    public static int commandNumber = 20;
+
     private void Start()
     {
         NumList.Add(0);
@@ -120,13 +122,19 @@ public class GameManager : MonoBehaviour
 
         Image dropImage;
         // Framesの子のFremeImage1～Nまでを取得
-        for (var i = 0; i < 4; i++)
+        for (var i = 0; i < commandNumber; i++)
         {
             // FremeImage1～20まで子のDropImageを取得
             var frameImageName = $"FrameImage_{i + 1}";
-            dropImage = Content.transform.Find(frameImageName).GetChild(0).gameObject.GetComponent<Image>();
-            
-            // print(frames.transform.GetChild(i).transform.GetChild(0).name);
+
+            try
+            {
+                dropImage = Content.transform.Find(frameImageName).GetChild(0).gameObject.GetComponent<Image>();
+            }
+            catch (NullReferenceException e)
+            {
+                break;
+            }
 
             // 枠の中に画像がセットされているとき、その画像名を取得
             if (dropImage.sprite != null)
