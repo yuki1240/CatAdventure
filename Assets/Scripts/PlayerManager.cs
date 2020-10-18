@@ -37,7 +37,8 @@ public class PlayerManager : MonoBehaviour
 
     void FixedUpdate()
     {
-        Debug.DrawRay(transform.position, transform.position + new Vector3(0.0f, 10f, 0.0f), Color.blue, 10, false);
+        // Debug.DrawRay(transform.position, transform.position + new Vector3(0.0f, 10f, 0.0f), Color.blue, 10, false);
+
     }
 
     IEnumerator PlayerMove()
@@ -52,7 +53,7 @@ public class PlayerManager : MonoBehaviour
             if (nowCmd == "Attack")
             { 
                 Vector3 nowPos = transform.position;
-
+                print("Attack");
                 switch (plaeyInfo)
                 {
                     
@@ -60,57 +61,115 @@ public class PlayerManager : MonoBehaviour
                     case "front":
                         print("今の向き : " + "front");
                         
-                        RaycastHit2D HitObject = Physics2D.Raycast(nowPos, -Vector2.up);
+                        RaycastHit2D HitObject = Physics2D.Raycast(nowPos, Vector2.up);
 
                         print(HitObject.transform.name);
 
                         if (HitObject.transform.tag == "Enemy")
                         {
+                            print("enemy!");
                             enemy.SetActive(false);
                         }
                         break;
 
                     case "back":
-                        
+                        print("今の向き : " + "front");
+
+                        HitObject = Physics2D.Raycast(nowPos, -Vector2.up);
+
+                        print(HitObject.transform.name);
+
+                        if (HitObject.transform.tag == "Enemy")
+                        {
+                            print("enemy!");
+                            enemy.SetActive(false);
+                        }
                         break;
 
                     case "right":
-                        
+                        print("今の向き : " + "front");
+
+                        HitObject = Physics2D.Raycast(nowPos, Vector2.right);
+
+                        print(HitObject.transform.name);
+
+                        if (HitObject.transform.tag == "Enemy")
+                        {
+                            print("enemy!");
+                            enemy.SetActive(false);
+                        }
                         break;
 
                     case "left":
-                        
+                        print("今の向き : " + "front");
+
+                        HitObject = Physics2D.Raycast(nowPos, Vector2.left);
+
+                        print(HitObject.transform.name);
+
+                        if (HitObject.transform.tag == "Enemy")
+                        {
+                            print("enemy!");
+                            enemy.SetActive(false);
+                        }
                         break;
                 }
             }
-            else if (nowCmd == "Walk")
+
+            // 1歩前に進む
+            else if (nowCmd == "Walk1")
             {
                 Vector3 currentPosition = transform.position;
 
                 switch (plaeyInfo)
                 {
                     case "front":
-                        print("front");
                         // animator.Play("Walk_front");
                         rb.MovePosition(currentPosition + new Vector3(0.0f, 0.65f, 0.0f));
                         break;
 
                     case "back":
-                        print("back");
                         // animator.Play("Walk_back");
                         rb.MovePosition(currentPosition + new Vector3(0.0f, -0.65f, 0.0f));
                         break;
 
                     case "right":
-                        print("right");
                         // animator.Play("Walk_right");
                         rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
                         break;
 
                     case "left":
-                        print("left");
                         // animator.Play("Walk_left");
                         rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
+                        break;
+                }
+            }
+
+            // 2歩前に進む
+            else if (nowCmd == "Walk2")
+            {
+                Vector3 currentPosition = transform.position;
+
+                switch (plaeyInfo)
+                {
+                    case "front":
+                        // animator.Play("Walk_front");
+                        rb.MovePosition(currentPosition + new Vector3(0.0f, 1.3f, 0.0f));
+                        break;
+
+                    case "back":
+                        // animator.Play("Walk_back");
+                        rb.MovePosition(currentPosition + new Vector3(0.0f, -1.3f, 0.0f));
+                        break;
+
+                    case "right":
+                        // animator.Play("Walk_right");
+                        rb.MovePosition(currentPosition + new Vector3(1.3f, 0.0f, 0.0f));
+                        break;
+
+                    case "left":
+                        // animator.Play("Walk_left");
+                        rb.MovePosition(currentPosition + new Vector3(-1.3f, 0.0f, 0.0f));
                         break;
                 }
             }
