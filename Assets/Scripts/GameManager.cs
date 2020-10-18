@@ -22,12 +22,12 @@ public class GameManager : MonoBehaviour
 
     // 左上の出現座標
     Vector3 upperLeft = new Vector3(-1.89f, 4.15f, 0.0f);
+    // 右上の出現座標
+    Vector3 upperRight = new Vector3(1.89f, 4.15f, 0.0f);
     // 左下の出現座標
     Vector3 lowerLeft = new Vector3(-1.89f, 0.35f, 0.0f);
-    // 右上の出現座標
-    Vector3 upperRight = new Vector3(-1.89f, 4.15f, 0.0f);
     // 右下の出現座標
-    Vector3 lowerRight = new Vector3(-1.89f, 0.35f, 0.0f);
+    Vector3 lowerRight = new Vector3(1.89f, 0.35f, 0.0f);
 
     // セットされたコマンド画像を入れておく配列
     Image[] dropImageChild = new Image[20];
@@ -42,13 +42,18 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        NumList.Add(0);
-        NumList.Add(1);
-        NumList.Add(2);
+        for (int i = 0; i < 4; i++)
+        {
+            NumList.Add(i);
+        }
 
         // 宝箱、プレイヤー、敵の初期位置を決める
         box.transform.position = setStartPosition();
+        print(box.transform.position);
+
         player.transform.position = setStartPosition();
+        print(player.transform.position);
+
         enemy.transform.position = enemyPositon();
 
         // データのセーブ
@@ -66,6 +71,11 @@ public class GameManager : MonoBehaviour
 
         // NumListのシャッフル
         NumList = NumList.OrderBy(a => Guid.NewGuid()).ToList();
+
+        foreach (int n in NumList)
+        {
+            print(n);
+        }
 
         print("NumList[0] : " + NumList[0]);
 
@@ -85,6 +95,11 @@ public class GameManager : MonoBehaviour
             case 2:
                 // 左下の出現座標を返す
                 pos = lowerLeft;
+                NumList.RemoveAt(0);
+                return pos;
+            case 3:
+                // 右下の出現座標を返す
+                pos = lowerRight;
                 NumList.RemoveAt(0);
                 return pos;
         }
