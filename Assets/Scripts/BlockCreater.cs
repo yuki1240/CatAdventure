@@ -19,6 +19,7 @@ public class BlockCreater : MonoBehaviour
 
     void MapGenerator()
     {
+        // 外側の壁を作る
         mapInfo = new bool[blockCountX, blockCountY];
         for (int y = 0; y < blockCountY; y++)
         {
