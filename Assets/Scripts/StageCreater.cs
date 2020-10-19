@@ -66,7 +66,7 @@ public class StageCreater : MonoBehaviour
                 for (int n = 0; n < 3; n++)
                 {
                     // randPosXに含まれるランダムな数の座標にきたら
-                    if (_randPosX.Contains(x))
+                    if (false)
                     {
                         // Blockを出現させる処理
                         float posX = blockSizeX * x;
@@ -134,7 +134,7 @@ public class StageCreater : MonoBehaviour
             {
                 return mapPos[i, n];
             }
-        {
+        }
 
         return Vector3.zero;
     }

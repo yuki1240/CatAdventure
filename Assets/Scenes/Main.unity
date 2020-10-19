@@ -5439,7 +5439,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0000102669, y: -24}
+  m_AnchoredPosition: {x: 0, y: -24}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &632573311
@@ -10242,14 +10242,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1254890287}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bc7fc56e83f794438e6ab92c9bff08f, type: 3}
+  m_Script: {fileID: 11500000, guid: ee168635ccaa7b14f83926a958a8c836, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   block: {fileID: 952633608720844836, guid: c184f2a05388e0d4a87e99cc435e5f6b, type: 3}
   enemy: {fileID: 1664331965}
-  player: {fileID: 0}
-  posWidth: 9
-  posHeight: 9
+  player: {fileID: 930794114}
+  canvas: {fileID: 1738259191}
+  startPosition: {x: 0, y: 0, z: 0}
+  mapWidth: 9
+  mapHeight: 9
 --- !u!1 &1255347233
 GameObject:
   m_ObjectHideFlags: 0
@@ -15083,14 +15085,14 @@ RectTransform:
   m_GameObject: {fileID: 1664331965}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0}
+  m_LocalScale: {x: 1.4143646, y: 1.4143646, z: 0}
   m_Children: []
   m_Father: {fileID: 1738259195}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -415.82318, y: -640}
   m_SizeDelta: {x: 0.512, y: 0.512}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!61 &1664331968
