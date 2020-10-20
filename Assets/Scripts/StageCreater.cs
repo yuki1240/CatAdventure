@@ -2,161 +2,159 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 
 public class StageCreater : MonoBehaviour
 {
+    public enum CellType {
+        Empty,
+        Block,
+        JuweryBox,
+        Enemy, 
+        Player 
+    }
+
     public GameObject block;
     public GameObject enemy;
+    public GameObject juweryBox;
     public GameObject player;
+    public float cellSize = 0.63f;
 
-    public GameObject canvas;
-
-    public Vector3 startPosition = Vector3.zero;
-    // List<int> randPosX = new List<int>();
+    public Vector3 startPosition = new Vector3(-2.31f, 0.0f, 0.0f);
 
     public int mapWidth = 9;
     public int mapHeight = 9;
 
-    // マップ上の障害物（敵やブロック）の情報
-    bool[,] mapInfo = null;
-
-    Vector3[,] mapPos;
-
-    // マップの座標情報
-    Vector3 coordinates = Vector3.zero;
+    CellType[,] cells = null;
 
     void Start()
     {
-        // 配列の初期化
-        mapInfo = new bool[mapWidth, mapHeight];
+        cells = new CellType[mapHeight, mapWidth];
 
-        Vector3[,] pos = new Vector3[mapWidth, mapHeight];
-        Vector3 startPos = Vector3.zero;
+        // 空のセルで埋める
         for (int y = 0; y < mapHeight; y++)
         {
-            for (int x = 0; x < mapWidth; x++)
+            for (int x = 0; x < mapHeight; x++)
             {
-                mapPos[x, y] = new Vector3(startPos.x, startPos.y, 0.0f);
-                startPos.x += block.transform.localScale.x;
+                cells[y, x] = CellType.Empty;
             }
-            startPos.y += block.transform.localScale.y;
         }
 
-        blockCreater();
-    }
-
-    void Update()
-    {
-
-    }
-
-    void blockCreater()
-    {
-        // var _randPosX = randPosXCreater();
-
-
-        // マップ情報を見て、ブロックを作る
-        float blockSizeX = block.transform.localScale.x;
-        float blockSizeY = block.transform.localScale.y;
-
-        for (int y = 0; y < mapHeight; y++)
+        // 最上列をブロックで埋める
+        for (int x = 0; x < mapWidth; x++)
         {
-            for (int x = 0; x < mapWidth; x++)
+            cells[mapHeight - 1, x] = CellType.Block;
+        }
+
+        // 最下列をブロックで埋める
+        for (int x = 0; x < mapWidth; x++)
+        {
+            cells[0, x] = CellType.Block;
+        }
+
+        // 宝箱配置
+        int randNum = UnityEngine.Random.Range(0, mapWidth);
+        cells[mapHeight - 1, randNum] = CellType.JuweryBox;
+
+        // プレイヤー配置
+        randNum = UnityEngine.Random.Range(0, mapWidth);
+        cells[0, randNum] = CellType.Player;
+
+        // ブロックの配置
+        int blockCount = 3;
+        for(int y = 1; y < mapHeight - 1; y++) 
+        {
+            int[] rand = Enumerable.Range(0, mapWidth - 1).OrderBy(n => Guid.NewGuid()).Take(blockCount).ToArray();
+            for (int i = 0; i < rand.Length; i++)
             {
-                for (int n = 0; n < 3; n++)
+                cells[y, rand[i]] = CellType.Block;
+            }
+        }
+
+
+        // 敵の配置
+        for (int y = 1; y < mapHeight - 1; y++)
+        {
+            randNum = UnityEngine.Random.Range(0, mapWidth);
+            cells[y, randNum] = CellType.Enemy;
+        }
+
+
+        DebugMapCell();
+        CreateMapObjects();
+    }
+
+    void CreateMapObjects()
+    {
+        for(int y = 0; y < mapHeight; y++)
+        {
+            for(int x = 0; x < mapWidth; x++)
+            {
+                CellType cellType = cells[y, x];
+                if(cellType == CellType.Block) 
                 {
-                    // randPosXに含まれるランダムな数の座標にきたら
-                    if (false)
-                    {
-                        // Blockを出現させる処理
-                        float posX = blockSizeX * x;
-                        float posY = blockSizeY * y;
-                        // -426, 13
-                        // -470, -640
-                        Vector3 blockPos = new Vector3(0.0f, 451.0f, 0.0f);
-                        // blockPos = blockPos - canvas.transform.position;
-                        GameObject obj = Instantiate(block, blockPos, Quaternion.identity);
-                        obj.transform.parent = transform;
-                    }
+                    var blockObj = Instantiate(block, transform);
+                    blockObj.transform.position = GetSpawnPosition(y, x);
+                }
+                else if (cellType == CellType.Enemy)
+                {
+                    var enemyObj = Instantiate(enemy, transform);
+                    enemyObj.transform.position = GetSpawnPosition(y, x);
+                }
+                else if (cellType == CellType.JuweryBox)
+                {
+                    var juweryBoxObj = Instantiate(juweryBox, transform);
+                    juweryBoxObj.transform.position = GetSpawnPosition(y, x);
+                }
+                if (cellType == CellType.Player)
+                {
+                    var playerObj = Instantiate(player, transform);
+                    playerObj.transform.position = GetSpawnPosition(y, x);
                 }
             }
         }
-
-     
     }
 
-    void enemyCreater()
+    Vector3 GetSpawnPosition(int y, int x) 
     {
-
+        Vector3 pos = startPosition;
+        pos.x += x * cellSize;
+        pos.y += y * cellSize;
+        return pos;
     }
 
-    void playerCreater()
+    void DebugMapCell() 
     {
-
-    }
-
-    // マップに敵やブロックがあるかどうかのチェック
-    void cheakObject()
-    {
-        mapInfo = new bool[mapWidth, mapHeight];
-        for (int y = 0; y < mapHeight; y++)
+        StringBuilder builder = new StringBuilder();
+        for (int y = mapHeight - 1; y >= 0; y--)
         {
             for (int x = 0; x < mapWidth; x++)
             {
-
+                builder.Append(CellTypeToString(cells[y, x]));
             }
+            builder.AppendLine();
         }
+
+        Debug.Log(builder.ToString());
     }
 
-    Vector3 getCoordinates(int n)
+    string CellTypeToString(CellType cellType)
     {
-
-        var _randPosX = new List<int>();
-
-        for (int i = 0; i < mapWidth; i++)
+        switch (cellType)
         {
-            _randPosX.Add(i);
+            case CellType.Empty:
+                return "□";
+            case CellType.Block:
+                return "■";
+            case CellType.JuweryBox:
+                return "▽";
+            case CellType.Enemy:
+                return "×";
+            case CellType.Player:
+                return "P";
+            default:
+                return "";
         }
-
-        // randPosXのシャッフル
-        _randPosX = _randPosX.OrderBy(a => Guid.NewGuid()).ToList();
-
-        // RemoveAt(0)を行い、3つの値(初期値)を持ったrandPosXを作成する
-        for (int i = 0; i < mapWidth - n; i++)
-        {
-            _randPosX.RemoveAt(0);
-        }
-
-        for (int i = 0; i < n; i++)
-        {
-            // 障害物がなかったら、その場所の座標を返す
-            if (!mapInfo[_randPosX[i], n])
-            {
-                return mapPos[i, n];
-            }
-        }
-
-        return Vector3.zero;
     }
 
-    List<int> randPosXCreater()
-    {
-        var _randPosX = new List<int>();
-
-        for (int i = 0; i < mapWidth; i++)
-        {
-            _randPosX.Add(i);
-        }
-
-        // randPosXのシャッフル
-        _randPosX = _randPosX.OrderBy(a => Guid.NewGuid()).ToList();
-
-        // RemoveAt(0)を行い、3つの値(初期値)を持ったrandPosXを作成する
-        for (int i = 0; i < mapWidth - 3; i++)
-        {
-            _randPosX.RemoveAt(0);
-        }
-
-        return _randPosX;
-    }
 }
