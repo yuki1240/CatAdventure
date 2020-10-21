@@ -482,7 +482,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 1588268405}
 --- !u!61 &38940388
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2311,7 +2311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 968007289}
 --- !u!61 &269552123
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3596,7 +3596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 2084144340}
 --- !u!61 &440728107
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4000,7 +4000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 641625377}
 --- !u!61 &485939495
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7231,7 +7231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 21268903}
 --- !u!61 &910722134
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7688,7 +7688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 1180399049}
 --- !u!61 &967482220
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7905,7 +7905,6 @@ GameObject:
   - component: {fileID: 973413721}
   - component: {fileID: 973413720}
   - component: {fileID: 973413719}
-  - component: {fileID: 973413718}
   - component: {fileID: 973413723}
   m_Layer: 0
   m_Name: ClearButton
@@ -7934,19 +7933,6 @@ RectTransform:
   m_AnchoredPosition: {x: 22, y: -22}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &973413718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 973413716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
 --- !u!61 &973413719
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -8016,7 +8002,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 973413718}
+      - m_Target: {fileID: 973413723}
         m_MethodName: Remove
         m_Mode: 1
         m_Arguments:
@@ -8075,7 +8061,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 1415943490}
 --- !u!1 &979803072
 GameObject:
   m_ObjectHideFlags: 0
@@ -9596,7 +9582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 1321019907}
 --- !u!61 &1194620768
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9766,7 +9752,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 1934412272}
 --- !u!61 &1195324376
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10623,7 +10609,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 453044338}
 --- !u!61 &1306232338
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -11781,7 +11767,6 @@ GameObject:
   - component: {fileID: 1415492472}
   - component: {fileID: 1415492471}
   - component: {fileID: 1415492470}
-  - component: {fileID: 1415492475}
   m_Layer: 0
   m_Name: ClearButton
   m_TagString: Untagged
@@ -11821,7 +11806,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 1230881309}
 --- !u!61 &1415492471
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -11938,19 +11923,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1415492468}
   m_CullTransparentMesh: 0
---- !u!114 &1415492475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1415492468}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
 --- !u!1 &1415943489
 GameObject:
   m_ObjectHideFlags: 0
@@ -12822,7 +12794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 580342402}
 --- !u!61 &1499038489
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -14935,7 +14907,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 1201198341}
 --- !u!61 &1659728000
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -17304,7 +17276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 0}
+  dropImage: {fileID: 86999178}
 --- !u!61 &1872043303
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -17740,7 +17712,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a468a7855c08db847bccc0c6da179ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropImage: {fileID: 1892798569}
+  dropImage: {fileID: 1414730436}
 --- !u!1 &1895843616
 GameObject:
   m_ObjectHideFlags: 0
