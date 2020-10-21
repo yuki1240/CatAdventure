@@ -12,6 +12,8 @@ public class PlayerManager : MonoBehaviour
     // 今の状態の猫画像
     SpriteRenderer playerImage;
 
+    GameObject playerPrefab;
+
     // それぞれの向きの猫画像
     public Sprite frontImage;
     public Sprite backImage;
@@ -33,6 +35,8 @@ public class PlayerManager : MonoBehaviour
         animator = this.transform.GetComponent<Animator>();
         rb = this.transform.GetComponent<Rigidbody2D>();
         playerImage = this.transform.GetComponent<SpriteRenderer>();
+
+        playerPrefab = GameObjct.Find("Player");
     }
 
     void FixedUpdate()

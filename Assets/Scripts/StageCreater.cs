@@ -40,17 +40,17 @@ public class StageCreater : MonoBehaviour
             }
         }
 
-        // 最上列をブロックで埋める
-        for (int x = 0; x < mapWidth; x++)
-        {
-            cells[mapHeight - 1, x] = CellType.Block;
-        }
+        //// 最上列をブロックで埋める
+        //for (int x = 0; x < mapWidth; x++)
+        //{
+        //    cells[mapHeight - 1, x] = CellType.Block;
+        //}
 
-        // 最下列をブロックで埋める
-        for (int x = 0; x < mapWidth; x++)
-        {
-            cells[0, x] = CellType.Block;
-        }
+        //// 最下列をブロックで埋める
+        //for (int x = 0; x < mapWidth; x++)
+        //{
+        //    cells[0, x] = CellType.Block;
+        //}
 
         // 宝箱配置
         int randNum = UnityEngine.Random.Range(0, mapWidth);
@@ -61,8 +61,8 @@ public class StageCreater : MonoBehaviour
         cells[0, randNum] = CellType.Player;
 
         // ブロックの配置
-        int blockCount = 3;
-        for(int y = 1; y < mapHeight - 1; y++) 
+        int blockCount = UnityEngine.Random.Range(1, 4);
+        for (int y = 1; y < mapHeight - 1; y++) 
         {
             int[] rand = Enumerable.Range(0, mapWidth - 1).OrderBy(n => Guid.NewGuid()).Take(blockCount).ToArray();
             for (int i = 0; i < rand.Length; i++)
