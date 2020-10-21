@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
     public void RunButtonClick()
     {
 
+        print("RunButtonClick");
+
         playerSclipt = GameObject.FindWithTag("Player").GetComponent<PlayerManager>();
 
         // コマンドリストの初期化

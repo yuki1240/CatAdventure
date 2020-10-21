@@ -18,6 +18,7 @@ public class StageCreater : MonoBehaviour
     public GameObject enemy;
     public GameObject juweryBox;
     public GameObject player;
+    public GameObject grid;
     public float cellSize = 0.63f;
 
     public Vector3 startPosition = new Vector3(-2.31f, 0.0f, 0.0f);
@@ -51,7 +52,7 @@ public class StageCreater : MonoBehaviour
         //{
         //    cells[0, x] = CellType.Block;
         //}
-
+        
         // 宝箱配置
         int randNum = UnityEngine.Random.Range(0, mapWidth);
         cells[mapHeight - 1, randNum] = CellType.JuweryBox;
@@ -84,6 +85,7 @@ public class StageCreater : MonoBehaviour
         CreateMapObjects();
     }
 
+    // マップに各オブジェクトを配置
     void CreateMapObjects()
     {
         for(int y = 0; y < mapHeight; y++)

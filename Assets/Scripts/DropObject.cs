@@ -7,6 +7,9 @@ public class DropObject : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     public Image iconImage;
     private Sprite nowSprite;
 
+    // public AudioClip sound;
+    // AudioSource audioSource;
+
     void Start()
     {
         nowSprite = null;
@@ -37,6 +40,9 @@ public class DropObject : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     }
     public void OnDrop(PointerEventData pointerEventData)
     {
+        // 効果音の再生
+        // audioSource.PlayOneShot(sound);
+
         Image droppedImage = pointerEventData.pointerDrag.GetComponent<Image>();
         if (droppedImage.sprite == null)
         {

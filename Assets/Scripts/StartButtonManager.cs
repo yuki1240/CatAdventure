@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class StartButtonManager : MonoBehaviour
 {
  
-    public void startButtonClick()
+    public void StartButtonClick()
     {
         SceneManager.LoadScene("Main");
     }

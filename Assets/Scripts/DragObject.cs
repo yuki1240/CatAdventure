@@ -8,13 +8,20 @@ public class DragObject : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     private Transform canvasTran;
     private GameObject draggingObject;
 
+    public AudioClip sound;
+    AudioSource audioSource;
+
     void Awake()
     {
         canvasTran = transform.parent.parent;
+        audioSource = GetComponent<AudioSource>();
     }
 
     public void OnBeginDrag(PointerEventData pointerEventData)
     {
+        // 効果音の再生
+        audioSource.PlayOneShot(sound);
+
         CreateDragObject();
         draggingObject.transform.position = pointerEventData.position;
     }

@@ -130,22 +130,22 @@ public class PlayerManager : MonoBehaviour
                 {
                     case "front":
                         // animator.Play("Walk_front");
-                        rb.MovePosition(currentPosition + new Vector3(0.0f, 0.65f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(0.0f, 0.63f, 0.0f));
                         break;
 
                     case "back":
                         // animator.Play("Walk_back");
-                        rb.MovePosition(currentPosition + new Vector3(0.0f, -0.65f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(0.0f, -0.63f, 0.0f));
                         break;
 
                     case "right":
                         // animator.Play("Walk_right");
-                        rb.MovePosition(currentPosition + new Vector3(0.65f, 0.0f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(0.63f, 0.0f, 0.0f));
                         break;
 
                     case "left":
                         // animator.Play("Walk_left");
-                        rb.MovePosition(currentPosition + new Vector3(-0.65f, 0.0f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(-0.63f, 0.0f, 0.0f));
                         break;
                 }
             }
@@ -279,6 +279,7 @@ public class PlayerManager : MonoBehaviour
         // すべての処理が終わって、宝箱にたどり着いたいなかったら、初期座標に戻す
         if (!clearFlag)
         {
+            print("aa");
             this.transform.position = _startPos;
         }
     }
