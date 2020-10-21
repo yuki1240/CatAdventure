@@ -10,7 +10,7 @@ public class PlayerManager : MonoBehaviour
     public float speed = 1.0f;
 
     // ステージがクリアされたらtrue
-    [System.NonSerialized] static bool clearFlag = false;
+    bool clearFlag = false;
 
     // 今の状態のプレイヤー画像
     SpriteRenderer playerImage;
@@ -27,6 +27,12 @@ public class PlayerManager : MonoBehaviour
 
     public GameObject enemy;
 
+    public GameObject tryAgainText;
+
+    // 音源の準備
+    public AudioSource audioSource;
+    public AudioClip mistake;
+
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
 
@@ -38,6 +44,7 @@ public class PlayerManager : MonoBehaviour
         animator = this.transform.GetComponent<Animator>();
         rb = this.transform.GetComponent<Rigidbody2D>();
         playerImage = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
+
     }
 
     void FixedUpdate()
@@ -56,68 +63,47 @@ public class PlayerManager : MonoBehaviour
 
             // 攻撃
             if (nowCmd == "Attack")
-            { 
-                Vector3 nowPos = transform.position;
+            {
+                Vector3 _nowPos = transform.position;
                 print("Attack");
                 switch (plaeyInfo)
                 {
-                    
-
                     case "front":
-                        print("今の向き : " + "front");
-                        
-                        RaycastHit2D HitObject = Physics2D.Raycast(nowPos, Vector2.up);
+                        RaycastHit2D _hitObj = Physics2D.Raycast(_nowPos, Vector2.up);
 
-                        print(HitObject.transform.name);
-
-                        if (HitObject.transform.tag == "Enemy")
+                        if (_hitObj.transform.tag == "Enemy")
                         {
-                            print("enemy!");
-                            enemy.SetActive(false);
+                            Destroy(_hitObj.transform.gameObject);
                         }
                         break;
 
                     case "back":
-                        print("今の向き : " + "front");
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.down);
 
-                        HitObject = Physics2D.Raycast(nowPos, -Vector2.up);
-
-                        print(HitObject.transform.name);
-
-                        if (HitObject.transform.tag == "Enemy")
+                        if (_hitObj.transform.tag == "Enemy")
                         {
-                            print("enemy!");
-                            enemy.SetActive(false);
+                            Destroy(_hitObj.transform.gameObject);
                         }
                         break;
 
                     case "right":
-                        print("今の向き : " + "front");
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.right);
 
-                        HitObject = Physics2D.Raycast(nowPos, Vector2.right);
-
-                        print(HitObject.transform.name);
-
-                        if (HitObject.transform.tag == "Enemy")
+                        if (_hitObj.transform.tag == "Enemy")
                         {
-                            print("enemy!");
-                            enemy.SetActive(false);
+                            Destroy(_hitObj.transform.gameObject);
                         }
                         break;
 
                     case "left":
-                        print("今の向き : " + "front");
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.left);
 
-                        HitObject = Physics2D.Raycast(nowPos, Vector2.left);
-
-                        print(HitObject.transform.name);
-
-                        if (HitObject.transform.tag == "Enemy")
+                        if (_hitObj.transform.tag == "Enemy")
                         {
-                            print("enemy!");
-                            enemy.SetActive(false);
+                            Destroy(_hitObj.transform.gameObject);
                         }
                         break;
+
                 }
             }
 
@@ -159,22 +145,22 @@ public class PlayerManager : MonoBehaviour
                 {
                     case "front":
                         // animator.Play("Walk_front");
-                        rb.MovePosition(currentPosition + new Vector3(0.0f, 1.3f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(0.0f, 1.26f, 0.0f));
                         break;
 
                     case "back":
                         // animator.Play("Walk_back");
-                        rb.MovePosition(currentPosition + new Vector3(0.0f, -1.3f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(0.0f, -1.26f, 0.0f));
                         break;
 
                     case "right":
                         // animator.Play("Walk_right");
-                        rb.MovePosition(currentPosition + new Vector3(1.3f, 0.0f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(1.26f, 0.0f, 0.0f));
                         break;
 
                     case "left":
                         // animator.Play("Walk_left");
-                        rb.MovePosition(currentPosition + new Vector3(-1.3f, 0.0f, 0.0f));
+                        rb.MovePosition(currentPosition + new Vector3(-1.26f, 0.0f, 0.0f));
                         break;
                 }
             }
@@ -229,8 +215,24 @@ public class PlayerManager : MonoBehaviour
                 }
             }
             // 1秒間のスリープ処理
-            yield return new WaitForSeconds(1.0f);
+            if (i != cmdList.Count - 1)
+            {
+                yield return new WaitForSeconds(1.0f);
+            }
+            // 最後のコマンドを実行時
+            else
+            {
+                yield return new WaitForSeconds(0.5f);
+            }
         }
+        if (!clearFlag)
+        {
+            // これがならない
+            audioSource.PlayOneShot(mistake); 
+
+            // tryAgainText.SetActive(true);
+        }
+
     }
 
     // 今の猫の向きを取得
@@ -268,6 +270,8 @@ public class PlayerManager : MonoBehaviour
 
         cmdList = _cmdList;
 
+        print("cmdList.Count : " + cmdList.Count);
+
         for (int i = 0; i < cmdList.Count; i++)
         {
             // print(i+1 + "番目：" + cmdList[i]);
@@ -275,13 +279,6 @@ public class PlayerManager : MonoBehaviour
 
         // 受け取ったコマンド情報を元に猫を動かす
         StartCoroutine(PlayerMove());
-
-        // すべての処理が終わって、宝箱にたどり着いたいなかったら、初期座標に戻す
-        if (!clearFlag)
-        {
-            print("aa");
-            this.transform.position = _startPos;
-        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -291,5 +288,10 @@ public class PlayerManager : MonoBehaviour
             clearFlag = true;
             print("Clear!");
         }
+    }
+
+    public void TryAgainButtonClick()
+    {
+        tryAgainText.SetActive(false);
     }
 }

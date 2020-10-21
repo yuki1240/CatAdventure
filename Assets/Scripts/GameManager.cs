@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public GameObject Content;
     public GameObject runButton;
 
-    public PlayerManager playerSclipt;
+    private PlayerManager playerSclipt;
 
     // セットされたコマンド画像を入れておく配列
     Image[] dropImageChild = new Image[20];
@@ -19,9 +19,7 @@ public class GameManager : MonoBehaviour
     [System.NonSerialized]
     public List<string> cmdList = new List<string>();
 
-
-
-    public static int commandNumber = 20;
+    public int CommandNumber = 20;
 
     private void Start()
     {
@@ -46,10 +44,12 @@ public class GameManager : MonoBehaviour
         // コマンドリストの初期化
         cmdList.Clear();
 
+        print("cmdList : " + cmdList.Count);
+
         Image dropImage;
 
         // Framesの子のFremeImage1～Nまでを取得
-        for (var i = 0; i < commandNumber; i++)
+        for (var i = 0; i < CommandNumber; i++)
         {
             // FremeImage1～20まで子のDropImageを取得
             var frameImageName = $"FrameImage_{i + 1}";
@@ -67,10 +67,6 @@ public class GameManager : MonoBehaviour
             if (dropImage.sprite != null)
             {
                 cmdList.Add(dropImage.sprite.name);
-            }
-            else
-            {
-                cmdList.Add(null);
             }
 
         }
