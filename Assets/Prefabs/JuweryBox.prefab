@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 175130332829973724}
   m_Layer: 0
   m_Name: JuweryBox
-  m_TagString: Box
+  m_TagString: JuweryBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

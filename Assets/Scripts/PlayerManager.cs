@@ -9,7 +9,10 @@ public class PlayerManager : MonoBehaviour
     // 猫の移動速度
     public float speed = 1.0f;
 
-    // 今の状態の猫画像
+    // ステージがクリアされたらtrue
+    [System.NonSerialized] static bool clearFlag = false;
+
+    // 今の状態のプレイヤー画像
     SpriteRenderer playerImage;
 
     GameObject playerPrefab;
@@ -34,9 +37,7 @@ public class PlayerManager : MonoBehaviour
     {
         animator = this.transform.GetComponent<Animator>();
         rb = this.transform.GetComponent<Rigidbody2D>();
-        playerImage = this.transform.GetComponent<SpriteRenderer>();
-
-        playerPrefab = GameObjct.Find("Player");
+        playerImage = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
     }
 
     void FixedUpdate()
@@ -262,6 +263,9 @@ public class PlayerManager : MonoBehaviour
     // コマンド情報をGameManagerから受け取るための処理
     public void ReceaveCmd(List<string> _cmdList)
     {
+        
+        Vector3 _startPos = this.transform.position;
+
         cmdList = _cmdList;
 
         for (int i = 0; i < cmdList.Count; i++)
@@ -271,12 +275,19 @@ public class PlayerManager : MonoBehaviour
 
         // 受け取ったコマンド情報を元に猫を動かす
         StartCoroutine(PlayerMove());
+
+        // すべての処理が終わって、宝箱にたどり着いたいなかったら、初期座標に戻す
+        if (!clearFlag)
+        {
+            this.transform.position = _startPos;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.tag == "Box")
+        if (collision.transform.tag == "JuweryBox")
         {
+            clearFlag = true;
             print("Clear!");
         }
     }

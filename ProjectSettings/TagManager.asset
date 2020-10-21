@@ -5,8 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - Box
   - Block
+  - JuweryBox
+  - Box
   layers:
   - Default
   - TransparentFX

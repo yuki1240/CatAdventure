@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     {
         // データのセーブ
         // SaveData.Instance.Save();
+
+        
     }
 
     void Update()
@@ -36,6 +38,9 @@ public class GameManager : MonoBehaviour
 
     public void RunButtonClick()
     {
+
+        playerSclipt = GameObject.FindWithTag("Player").GetComponent<PlayerManager>();
+
         // コマンドリストの初期化
         cmdList.Clear();
 
