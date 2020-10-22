@@ -36,15 +36,12 @@ public class GameManager : MonoBehaviour
 
     public void RunButtonClick()
     {
-
-        print("RunButtonClick");
-
         playerSclipt = GameObject.FindWithTag("Player").GetComponent<PlayerManager>();
 
         // コマンドリストの初期化
         cmdList.Clear();
 
-        print("cmdList : " + cmdList.Count);
+        // print("cmdList : " + cmdList.Count);
 
         Image dropImage;
 

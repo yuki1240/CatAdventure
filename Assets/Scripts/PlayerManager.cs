@@ -25,8 +25,6 @@ public class PlayerManager : MonoBehaviour
 
     public Sprite attackImage;
 
-    public GameObject enemy;
-
     public GameObject tryAgainText;
 
     // 音源の準備
@@ -36,25 +34,25 @@ public class PlayerManager : MonoBehaviour
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
 
-    private Animator animator = null;
+    // private Animator animator = null;
     private Rigidbody2D rb = null;
 
     void Start()
     {
-        animator = this.transform.GetComponent<Animator>();
+        // animator = this.transform.GetComponent<Animator>();
         rb = this.transform.GetComponent<Rigidbody2D>();
         playerImage = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
-
     }
 
     void FixedUpdate()
     {
-        // Debug.DrawRay(transform.position, transform.position + new Vector3(0.0f, 10f, 0.0f), Color.blue, 10, false);
-
+       
     }
 
     IEnumerator PlayerMove()
     {
+        // 実行の時間調整用
+        float sleepTime = 0.5f;
 
         for (int i = 0; i < cmdList.Count; i++)
         {
@@ -65,43 +63,30 @@ public class PlayerManager : MonoBehaviour
             if (nowCmd == "Attack")
             {
                 Vector3 _nowPos = transform.position;
-                print("Attack");
+                // print("Attack");
                 switch (plaeyInfo)
                 {
                     case "front":
                         RaycastHit2D _hitObj = Physics2D.Raycast(_nowPos, Vector2.up);
-
-                        if (_hitObj.transform.tag == "Enemy")
-                        {
-                            Destroy(_hitObj.transform.gameObject);
-                        }
+                        sleepTime += DestoryEnemy(_hitObj, sleepTime);
                         break;
 
                     case "back":
                         _hitObj = Physics2D.Raycast(_nowPos, Vector2.down);
 
-                        if (_hitObj.transform.tag == "Enemy")
-                        {
-                            Destroy(_hitObj.transform.gameObject);
-                        }
+                        sleepTime += DestoryEnemy(_hitObj, sleepTime);
                         break;
 
                     case "right":
                         _hitObj = Physics2D.Raycast(_nowPos, Vector2.right);
 
-                        if (_hitObj.transform.tag == "Enemy")
-                        {
-                            Destroy(_hitObj.transform.gameObject);
-                        }
+                        sleepTime += DestoryEnemy(_hitObj, sleepTime);
                         break;
 
                     case "left":
                         _hitObj = Physics2D.Raycast(_nowPos, Vector2.left);
 
-                        if (_hitObj.transform.tag == "Enemy")
-                        {
-                            Destroy(_hitObj.transform.gameObject);
-                        }
+                        sleepTime += DestoryEnemy(_hitObj, sleepTime);
                         break;
 
                 }
@@ -222,17 +207,31 @@ public class PlayerManager : MonoBehaviour
             // 最後のコマンドを実行時
             else
             {
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(sleepTime);
             }
         }
         if (!clearFlag)
         {
-            // これがならない
             audioSource.PlayOneShot(mistake); 
 
             // tryAgainText.SetActive(true);
         }
 
+    }
+
+    // 敵の削除
+    float DestoryEnemy(RaycastHit2D obj, float time)
+    {
+        if (obj.transform.tag == "Enemy")
+        {
+            obj.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
+            Destroy(obj.transform.gameObject, 1);
+            return 1.0f;
+        }
+        else
+        {
+            return 0.0f;
+        }
     }
 
     // 今の猫の向きを取得
@@ -270,7 +269,7 @@ public class PlayerManager : MonoBehaviour
 
         cmdList = _cmdList;
 
-        print("cmdList.Count : " + cmdList.Count);
+        // print("cmdList.Count : " + cmdList.Count);
 
         for (int i = 0; i < cmdList.Count; i++)
         {
