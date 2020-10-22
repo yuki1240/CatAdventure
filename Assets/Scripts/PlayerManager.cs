@@ -67,24 +67,24 @@ public class PlayerManager : MonoBehaviour
                 switch (plaeyInfo)
                 {
                     case "front":
-                        RaycastHit2D _hitObj = Physics2D.Raycast(_nowPos, Vector2.up);
+                        RaycastHit2D _hitObj = Physics2D.Raycast(_nowPos, new Vector2(0.0f, 0.4f));
                         sleepTime += DestoryEnemy(_hitObj, sleepTime);
                         break;
 
                     case "back":
-                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.down);
+                        _hitObj = Physics2D.Raycast(_nowPos, new Vector2(0.0f, -0.4f));
 
                         sleepTime += DestoryEnemy(_hitObj, sleepTime);
                         break;
 
                     case "right":
-                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.right);
+                        _hitObj = Physics2D.Raycast(_nowPos, new Vector2(0.4f, 0.0f));
 
                         sleepTime += DestoryEnemy(_hitObj, sleepTime);
                         break;
 
                     case "left":
-                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.left);
+                        _hitObj = Physics2D.Raycast(_nowPos, new Vector2(-0.4f, 0.0f));
 
                         sleepTime += DestoryEnemy(_hitObj, sleepTime);
                         break;
