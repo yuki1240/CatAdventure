@@ -67,26 +67,26 @@ public class PlayerManager : MonoBehaviour
                 switch (plaeyInfo)
                 {
                     case "front":
-                        RaycastHit2D _hitObj = Physics2D.Raycast(_nowPos, new Vector2(0.0f, 0.4f));
-                        sleepTime += DestoryEnemy(_hitObj, sleepTime);
+                        RaycastHit2D _hitObj = Physics2D.Raycast(_nowPos, Vector2.up, 0.4f);
+                        sleepTime += DestoryEnemy(_hitObj);
                         break;
 
                     case "back":
-                        _hitObj = Physics2D.Raycast(_nowPos, new Vector2(0.0f, -0.4f));
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.down, 0.4f);
 
-                        sleepTime += DestoryEnemy(_hitObj, sleepTime);
+                        sleepTime += DestoryEnemy(_hitObj);
                         break;
 
                     case "right":
-                        _hitObj = Physics2D.Raycast(_nowPos, new Vector2(0.4f, 0.0f));
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.right, 0.4f);
 
-                        sleepTime += DestoryEnemy(_hitObj, sleepTime);
+                        sleepTime += DestoryEnemy(_hitObj);
                         break;
 
                     case "left":
-                        _hitObj = Physics2D.Raycast(_nowPos, new Vector2(-0.4f, 0.0f));
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.left, 0.4f);
 
-                        sleepTime += DestoryEnemy(_hitObj, sleepTime);
+                        sleepTime += DestoryEnemy(_hitObj);
                         break;
 
                 }
@@ -220,12 +220,16 @@ public class PlayerManager : MonoBehaviour
     }
 
     // 敵の削除
-    float DestoryEnemy(RaycastHit2D obj, float time)
+    float DestoryEnemy(RaycastHit2D hitInfo)
     {
-        if (obj.transform.tag == "Enemy")
+        if (hitInfo.collider == null)
         {
-            obj.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
-            Destroy(obj.transform.gameObject, 1);
+            return 0.0f;
+        }
+        if (hitInfo.transform.tag == "Enemy")
+        {
+            hitInfo.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
+            Destroy(hitInfo.transform.gameObject, 1);
             return 1.0f;
         }
         else
