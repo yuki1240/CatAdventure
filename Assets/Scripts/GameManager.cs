@@ -3,15 +3,13 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject content;
+    public GameObject Content;
     public GameObject runButton;
-
-    public GameObject clearDisplay;
-    public GameObject reTryDisplay;
+    public GameObject reTryPanel;
 
     private PlayerManager playerSclipt;
 
@@ -27,9 +25,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // データのセーブ
-        // SaveData.Instance.Save();
-
-        
+        // SaveData.Instance.Save();      
     }
 
     void Update()
@@ -56,7 +52,7 @@ public class GameManager : MonoBehaviour
 
             try
             {
-                dropImage = content.transform.Find(frameImageName).GetChild(0).gameObject.GetComponent<Image>();
+                dropImage = Content.transform.Find(frameImageName).GetChild(0).gameObject.GetComponent<Image>();
             }
             catch
             {
@@ -71,7 +67,17 @@ public class GameManager : MonoBehaviour
 
         }
         // 一連のコマンド情報を猫に渡す
-        playerSclipt.ReceaveCmd(cmdList);
+        playerSclipt.ReceaveCmd(cmdList, reTryPanel);
+    }
+
+    public void ReTry()
+    {
+        reTryPanel.SetActive(false);
+    }
+
+    public void Reload()
+    {
+        SceneManager.LoadScene("Main");
     }
 
 }
