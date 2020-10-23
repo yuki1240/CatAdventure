@@ -7,8 +7,11 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject Content;
+    public GameObject content;
     public GameObject runButton;
+
+    public GameObject clearDisplay;
+    public GameObject reTryDisplay;
 
     private PlayerManager playerSclipt;
 
@@ -53,7 +56,7 @@ public class GameManager : MonoBehaviour
 
             try
             {
-                dropImage = Content.transform.Find(frameImageName).GetChild(0).gameObject.GetComponent<Image>();
+                dropImage = content.transform.Find(frameImageName).GetChild(0).gameObject.GetComponent<Image>();
             }
             catch
             {
