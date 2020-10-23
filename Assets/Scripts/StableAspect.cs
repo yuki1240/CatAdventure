@@ -10,7 +10,7 @@ public class StableAspect : MonoBehaviour
 
     void Awake()
     {
-        if (Screen.height / Screen.width > baseHeight / baseWidth)
+        if(Screen.height / Screen.width > baseHeight / baseWidth)
         {
             // アスペクト比固定
             var scale = Mathf.Min(Screen.height / this.baseHeight, Screen.width / this.baseWidth);
@@ -19,6 +19,5 @@ public class StableAspect : MonoBehaviour
             this.camera.rect = new Rect((1.0f - width) * 0.5f, (1.0f - height) * 0.5f, width, height);
         }
     }
+
 }
-
-

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
@@ -13,11 +12,10 @@ public class PlayerManager : MonoBehaviour
     // ステージがクリアされたらtrue
     bool clearFlag = false;
 
-    GameObject reTryPanel;
-    GameObject clearPanel;
-
     // 今の状態のプレイヤー画像
     SpriteRenderer playerImage;
+
+    GameObject playerPrefab;
 
     // それぞれの向きの猫画像
     public Sprite frontImage;
@@ -32,8 +30,6 @@ public class PlayerManager : MonoBehaviour
     // 音源の準備
     public AudioSource audioSource;
     public AudioClip mistake;
-    public AudioClip enemyDeath;
-    public AudioClip ActionSE;
 
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
@@ -66,30 +62,31 @@ public class PlayerManager : MonoBehaviour
             // 攻撃
             if (nowCmd == "Attack")
             {
-                Vector3 nowPos = transform.position;
+                Vector3 _nowPos = transform.position;
+                // print("Attack");
                 switch (plaeyInfo)
                 {
                     case "front":
-                        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.4f);
-                        sleepTime += DestoryEnemy(hitObj);
+                        RaycastHit2D _hitObj = Physics2D.Raycast(_nowPos, Vector2.up, 0.4f);
+                        sleepTime += DestoryEnemy(_hitObj);
                         break;
 
                     case "back":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.down, 0.4f);
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.down, 0.4f);
 
-                        sleepTime += DestoryEnemy(hitObj);
+                        sleepTime += DestoryEnemy(_hitObj);
                         break;
 
                     case "right":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.4f);
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.right, 0.4f);
 
-                        sleepTime += DestoryEnemy(hitObj);
+                        sleepTime += DestoryEnemy(_hitObj);
                         break;
 
                     case "left":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.4f);
+                        _hitObj = Physics2D.Raycast(_nowPos, Vector2.left, 0.4f);
 
-                        sleepTime += DestoryEnemy(hitObj);
+                        sleepTime += DestoryEnemy(_hitObj);
                         break;
 
                 }
@@ -122,7 +119,6 @@ public class PlayerManager : MonoBehaviour
                         rb.MovePosition(currentPosition + new Vector3(-0.63f, 0.0f, 0.0f));
                         break;
                 }
-                audioSource.PlayOneShot(ActionSE);
             }
 
             // 2歩前に進む
@@ -152,7 +148,6 @@ public class PlayerManager : MonoBehaviour
                         rb.MovePosition(currentPosition + new Vector3(-1.26f, 0.0f, 0.0f));
                         break;
                 }
-                audioSource.PlayOneShot(ActionSE);
             }
 
             // 右回転
@@ -178,7 +173,6 @@ public class PlayerManager : MonoBehaviour
                         playerImage.sprite = frontImage;
                         break;
                 }
-                audioSource.PlayOneShot(ActionSE);
             }
 
             // 左回転
@@ -204,9 +198,7 @@ public class PlayerManager : MonoBehaviour
                         playerImage.sprite = backImage;
                         break;
                 }
-                audioSource.PlayOneShot(ActionSE);
             }
-
             // 1秒間のスリープ処理
             if (i != cmdList.Count - 1)
             {
@@ -220,10 +212,11 @@ public class PlayerManager : MonoBehaviour
         }
         if (!clearFlag)
         {
-            audioSource.PlayOneShot(mistake);
-            reTryPanel.SetActive(true);
-            this.transform.position = Vector3.zero;
+            audioSource.PlayOneShot(mistake); 
+
+            // tryAgainText.SetActive(true);
         }
+
     }
 
     // 敵の削除
@@ -235,7 +228,6 @@ public class PlayerManager : MonoBehaviour
         }
         if (hitInfo.transform.tag == "Enemy")
         {
-            audioSource.PlayOneShot(enemyDeath);
             hitInfo.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
             Destroy(hitInfo.transform.gameObject, 1);
             return 1.0f;
@@ -274,10 +266,9 @@ public class PlayerManager : MonoBehaviour
     }
 
     // コマンド情報をGameManagerから受け取るための処理
-    public void ReceaveCmd(List<string> _cmdList, GameObject _obj)
+    public void ReceaveCmd(List<string> _cmdList)
     {
-        reTryPanel = _obj;
-
+        
         Vector3 _startPos = this.transform.position;
 
         cmdList = _cmdList;
@@ -293,7 +284,6 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(PlayerMove());
     }
 
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.transform.tag == "JuweryBox")
@@ -301,5 +291,10 @@ public class PlayerManager : MonoBehaviour
             clearFlag = true;
             print("Clear!");
         }
+    }
+
+    public void TryAgainButtonClick()
+    {
+        tryAgainText.SetActive(false);
     }
 }
