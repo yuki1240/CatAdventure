@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public GameObject Content;
     public GameObject runButton;
     public GameObject reTryPanel;
+    public GameObject clearPanel;
+    public GameObject almostPanel;
 
     private PlayerManager playerSclipt;
 
@@ -67,7 +69,7 @@ public class GameManager : MonoBehaviour
 
         }
         // 一連のコマンド情報を猫に渡す
-        playerSclipt.ReceaveCmd(cmdList, reTryPanel);
+        playerSclipt.ReceaveCmd(cmdList, reTryPanel, clearPanel, almostPanel);
     }
 
     public void ReTry()

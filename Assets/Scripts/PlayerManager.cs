@@ -15,6 +15,10 @@ public class PlayerManager : MonoBehaviour
 
     GameObject reTryPanel;
     GameObject clearPanel;
+    GameObject almostPanel;
+
+    // 宝箱まであと1マスだったら、true
+    bool isCollision = false;
 
     // 今の状態のプレイヤー画像
     SpriteRenderer playerImage;
@@ -70,24 +74,24 @@ public class PlayerManager : MonoBehaviour
                 switch (plaeyInfo)
                 {
                     case "front":
-                        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.4f);
+                        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.63f);
                         sleepTime += DestoryEnemy(hitObj);
                         break;
 
                     case "back":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.down, 0.4f);
+                        hitObj = Physics2D.Raycast(nowPos, Vector2.down, 0.63f);
 
                         sleepTime += DestoryEnemy(hitObj);
                         break;
 
                     case "right":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.4f);
+                        hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.63f);
 
                         sleepTime += DestoryEnemy(hitObj);
                         break;
 
                     case "left":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.4f);
+                        hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.63f);
 
                         sleepTime += DestoryEnemy(hitObj);
                         break;
@@ -215,6 +219,7 @@ public class PlayerManager : MonoBehaviour
             // 最後のコマンドを実行時
             else
             {
+                DistanceCheck2(plaeyInfo);
                 yield return new WaitForSeconds(sleepTime);
             }
         }
@@ -274,9 +279,11 @@ public class PlayerManager : MonoBehaviour
     }
 
     // コマンド情報をGameManagerから受け取るための処理
-    public void ReceaveCmd(List<string> _cmdList, GameObject _obj)
+    public void ReceaveCmd(List<string> _cmdList, GameObject _retryObj, GameObject _clearObj, GameObject _almostObj)
     {
-        reTryPanel = _obj;
+        reTryPanel = _retryObj;
+        clearPanel = _clearObj;
+        almostPanel = _almostObj;
 
         Vector3 _startPos = this.transform.position;
 
@@ -294,12 +301,64 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collision.transform.tag == "JuweryBox")
+        if (collider.transform.tag == "JuweryBox")
         {
             clearFlag = true;
+            clearPanel.SetActive(true);
             print("Clear!");
         }
+    }
+
+    void DistanceCheck2(string plaeyInfo)
+    {
+        Vector3 nowPos = transform.position;
+
+        // 宝箱との衝突判定(false = 当たっていない)
+        bool isCollision = false;
+
+        switch (plaeyInfo)
+        {
+            case "front":
+                RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 1.2f);
+                isCollision = DistanceCheck(hitObj);
+                break;
+
+            case "right":
+                hitObj = Physics2D.Raycast(nowPos, Vector2.right, 1.2f);
+                isCollision = DistanceCheck(hitObj);
+                break;
+
+            case "left":
+                hitObj = Physics2D.Raycast(nowPos, Vector2.left, 1.2f);
+                isCollision = DistanceCheck(hitObj);
+                break;
+
+        }
+    }
+
+    bool DistanceCheck(RaycastHit2D hitInfo)
+    {
+        if (hitInfo.collider == null)
+        {
+            return false;
+        }
+        if (hitInfo.transform.tag == "JuwrryBox")
+        {
+            almostPanel.SetActive(true);
+            StartCoroutine(Sleep());
+            almostPanel.SetActive(false);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    IEnumerator Sleep()
+    {
+        yield return new WaitForSeconds(2.0f);
     }
 }
