@@ -74,24 +74,24 @@ public class PlayerManager : MonoBehaviour
                 switch (plaeyInfo)
                 {
                     case "front":
-                        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.63f);
+                        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.6f);
                         sleepTime += DestoryEnemy(hitObj);
                         break;
 
                     case "back":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.down, 0.63f);
+                        hitObj = Physics2D.Raycast(nowPos, Vector2.down, 0.6f);
 
                         sleepTime += DestoryEnemy(hitObj);
                         break;
 
                     case "right":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.63f);
+                        hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.6f);
 
                         sleepTime += DestoryEnemy(hitObj);
                         break;
 
                     case "left":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.63f);
+                        hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.6f);
 
                         sleepTime += DestoryEnemy(hitObj);
                         break;
@@ -219,7 +219,7 @@ public class PlayerManager : MonoBehaviour
             // 最後のコマンドを実行時
             else
             {
-                DistanceCheck2(plaeyInfo);
+                DistanceCheck(plaeyInfo);
                 yield return new WaitForSeconds(sleepTime);
             }
         }
@@ -311,7 +311,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    void DistanceCheck2(string plaeyInfo)
+    void DistanceCheck(string plaeyInfo)
     {
         Vector3 nowPos = transform.position;
 
@@ -321,24 +321,24 @@ public class PlayerManager : MonoBehaviour
         switch (plaeyInfo)
         {
             case "front":
-                RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 1.2f);
-                isCollision = DistanceCheck(hitObj);
+                RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.6f);
+                isCollision = isCollisionBox(hitObj);
                 break;
 
             case "right":
-                hitObj = Physics2D.Raycast(nowPos, Vector2.right, 1.2f);
-                isCollision = DistanceCheck(hitObj);
+                hitObj = Physics2D.Raycast(nowPos, Vector2.right, 1.0f);
+                isCollision = isCollisionBox(hitObj);
                 break;
 
             case "left":
-                hitObj = Physics2D.Raycast(nowPos, Vector2.left, 1.2f);
-                isCollision = DistanceCheck(hitObj);
+                hitObj = Physics2D.Raycast(nowPos, Vector2.left, 1.0f);
+                isCollision = isCollisionBox(hitObj);
                 break;
 
         }
     }
 
-    bool DistanceCheck(RaycastHit2D hitInfo)
+    bool isCollisionBox(RaycastHit2D hitInfo)
     {
         if (hitInfo.collider == null)
         {
