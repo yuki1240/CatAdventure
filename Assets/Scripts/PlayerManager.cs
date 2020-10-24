@@ -13,12 +13,15 @@ public class PlayerManager : MonoBehaviour
     // ステージがクリアされたらtrue
     bool clearFlag = false;
 
+    // GameManagerから渡される各パターンのパネル
     GameObject reTryPanel;
     GameObject clearPanel;
     GameObject almostPanel;
 
+    public Vector3 startPosition;
+
     // 宝箱まであと1マスだったら、true
-    bool isCollision = false;
+    bool isAlmostCollision = false;
 
     // 今の状態のプレイヤー画像
     SpriteRenderer playerImage;
@@ -28,10 +31,6 @@ public class PlayerManager : MonoBehaviour
     public Sprite backImage;
     public Sprite rightImage;
     public Sprite leftImage;
-
-    public Sprite attackImage;
-
-    public GameObject tryAgainText;
 
     // 音源の準備
     public AudioSource audioSource;
@@ -223,11 +222,15 @@ public class PlayerManager : MonoBehaviour
                 yield return new WaitForSeconds(sleepTime);
             }
         }
-        if (!clearFlag)
+        if (!clearFlag && !isAlmostCollision)
         {
             audioSource.PlayOneShot(mistake);
             reTryPanel.SetActive(true);
-            this.transform.position = Vector3.zero;
+            // this.transform.position = startPosition;
+        }
+        else
+        {
+            // this.transform.position = startPosition;
         }
     }
 
@@ -285,7 +288,7 @@ public class PlayerManager : MonoBehaviour
         clearPanel = _clearObj;
         almostPanel = _almostObj;
 
-        Vector3 _startPos = this.transform.position;
+        startPosition = this.transform.position;
 
         cmdList = _cmdList;
 
@@ -321,20 +324,22 @@ public class PlayerManager : MonoBehaviour
         switch (plaeyInfo)
         {
             case "front":
-                RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.6f);
+                print(this.gameObject.transform.position);
+                RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 1.2f);
                 isCollision = isCollisionBox(hitObj);
                 break;
 
             case "right":
-                hitObj = Physics2D.Raycast(nowPos, Vector2.right, 1.0f);
+                print(this.gameObject.transform.position);
+                hitObj = Physics2D.Raycast(nowPos, Vector2.right, 1.2f);
                 isCollision = isCollisionBox(hitObj);
                 break;
 
             case "left":
-                hitObj = Physics2D.Raycast(nowPos, Vector2.left, 1.0f);
+                print(this.gameObject.transform.position);
+                hitObj = Physics2D.Raycast(nowPos, Vector2.left, 1.2f);
                 isCollision = isCollisionBox(hitObj);
                 break;
-
         }
     }
 
@@ -344,8 +349,9 @@ public class PlayerManager : MonoBehaviour
         {
             return false;
         }
-        if (hitInfo.transform.tag == "JuwrryBox")
+        if (hitInfo.transform.tag == "JuweryBox")
         {
+            isAlmostCollision = true;
             almostPanel.SetActive(true);
             StartCoroutine(Sleep());
             almostPanel.SetActive(false);

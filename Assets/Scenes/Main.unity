@@ -494,9 +494,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3511279200480352498, guid: c9a8b3050d6a0d847844808621018971,
-          type: 3}
-        m_MethodName: TryAgainButtonClick
+      - m_Target: {fileID: 734801421}
+        m_MethodName: ReTry
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1428,7 +1427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 986f9fe69259f5648a4cfcf4aaa29457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sound: {fileID: 8300000, guid: f364956ff0f10b04a960e439ebdd36ca, type: 3}
+  sound: {fileID: 8300000, guid: b315f2147ea68084eabe2129306add6a, type: 3}
 --- !u!114 &221053207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1686,7 +1685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 986f9fe69259f5648a4cfcf4aaa29457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sound: {fileID: 8300000, guid: f364956ff0f10b04a960e439ebdd36ca, type: 3}
+  sound: {fileID: 8300000, guid: b315f2147ea68084eabe2129306add6a, type: 3}
 --- !u!114 &238186528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4790,7 +4789,7 @@ MonoBehaviour:
   runButton: {fileID: 517049931}
   reTryPanel: {fileID: 28094841}
   clearPanel: {fileID: 1788188080}
-  almostPanel: {fileID: 0}
+  almostPanel: {fileID: 14012552}
   CommandNumber: 20
 --- !u!4 &734801422
 Transform:
@@ -6422,7 +6421,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 986f9fe69259f5648a4cfcf4aaa29457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sound: {fileID: 8300000, guid: f364956ff0f10b04a960e439ebdd36ca, type: 3}
+  sound: {fileID: 8300000, guid: b315f2147ea68084eabe2129306add6a, type: 3}
 --- !u!114 &1025560700
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10920,7 +10919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 986f9fe69259f5648a4cfcf4aaa29457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sound: {fileID: 8300000, guid: f364956ff0f10b04a960e439ebdd36ca, type: 3}
+  sound: {fileID: 8300000, guid: b315f2147ea68084eabe2129306add6a, type: 3}
 --- !u!114 &1695980107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12663,7 +12662,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 986f9fe69259f5648a4cfcf4aaa29457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sound: {fileID: 8300000, guid: f364956ff0f10b04a960e439ebdd36ca, type: 3}
+  sound: {fileID: 8300000, guid: b315f2147ea68084eabe2129306add6a, type: 3}
 --- !u!114 &2005182875
 MonoBehaviour:
   m_ObjectHideFlags: 0

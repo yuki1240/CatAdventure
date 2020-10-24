@@ -12,6 +12,11 @@ public class GameManager : MonoBehaviour
     public GameObject reTryPanel;
     public GameObject clearPanel;
     public GameObject almostPanel;
+    
+    // StageCreaterで生成された、プレイヤーオブジェクト
+    GameObject playerObj;
+
+    Vector3 playerStartPos;
 
     private PlayerManager playerSclipt;
 
@@ -28,6 +33,9 @@ public class GameManager : MonoBehaviour
     {
         // データのセーブ
         // SaveData.Instance.Save();      
+
+        // Playerオブジェクトを取得
+        playerObj = GameObject.FindWithTag("Player");
     }
 
     void Update()
@@ -37,7 +45,10 @@ public class GameManager : MonoBehaviour
 
     public void RunButtonClick()
     {
-        playerSclipt = GameObject.FindWithTag("Player").GetComponent<PlayerManager>();
+        // プレイヤーの初期位置を記録
+        playerStartPos = playerObj.transform.position;
+
+        playerSclipt = playerObj.GetComponent<PlayerManager>();
 
         // コマンドリストの初期化
         cmdList.Clear();
@@ -75,6 +86,7 @@ public class GameManager : MonoBehaviour
     public void ReTry()
     {
         reTryPanel.SetActive(false);
+        playerObj.transform.position = playerStartPos;
     }
 
     public void Reload()

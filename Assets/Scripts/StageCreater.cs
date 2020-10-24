@@ -28,7 +28,7 @@ public class StageCreater : MonoBehaviour
 
     CellType[,] cells = null;
 
-    void Start()
+    private void Awake()
     {
         cells = new CellType[mapHeight, mapWidth];
 
@@ -40,18 +40,6 @@ public class StageCreater : MonoBehaviour
                 cells[y, x] = CellType.Empty;
             }
         }
-
-        //// 最上列をブロックで埋める
-        //for (int x = 0; x < mapWidth; x++)
-        //{
-        //    cells[mapHeight - 1, x] = CellType.Block;
-        //}
-
-        //// 最下列をブロックで埋める
-        //for (int x = 0; x < mapWidth; x++)
-        //{
-        //    cells[0, x] = CellType.Block;
-        //}
         
         // 宝箱配置
         int randNum = UnityEngine.Random.Range(0, mapWidth);
