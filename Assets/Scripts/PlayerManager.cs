@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -12,6 +13,10 @@ public class PlayerManager : MonoBehaviour
 
     // プレイヤーの初期位置
     public Vector3 startPosition;
+
+    // プレイヤーの初期の傾き
+    public Quaternion startRotation;
+    
 
     // それぞれの向きの猫画像
     public Sprite frontImage;
@@ -26,20 +31,20 @@ public class PlayerManager : MonoBehaviour
     public AudioClip actionSE;
     public AudioClip clearSE;
 
-
     // ステージがクリアされたらtrue
-    bool clearFlag = false;
+    public bool clearFlag = false;
+
+    // 宝箱まであと1マスだったら、true
+    public bool isAlmostCollision = false;
+
+    // trueのとき、ゲームを中断（範囲外や敵に衝突したとき）
+    public bool gameStopFlag = false;
+
 
     // GameManagerから渡される各パターンのパネル
     GameObject reTryPanel;
     GameObject clearPanel;
     GameObject almostPanel;
-
-    // 宝箱まであと1マスだったら、true
-    bool isAlmostCollision = false;
-
-    // trueのとき、ゲームを中断（範囲外や敵に衝突したとき）
-    bool gameStopFlag = false;
 
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
@@ -237,6 +242,12 @@ public class PlayerManager : MonoBehaviour
                 playerInfo = GetplayerInfo();
             }
 
+            // ゲームの中断フラグが立っていないかをチェック
+            if (gameStopFlag)
+            {
+                yield break;
+            }
+
             // 1秒間のスリープ処理
             if (i != cmdList.Count - 1)
             {
@@ -249,11 +260,6 @@ public class PlayerManager : MonoBehaviour
                 yield return new WaitForSeconds(0.5f);
             }
 
-            // ゲームの中断フラグが立っていないかをチェック
-            //if(!gameStopFlag)
-            //{
-            //    yield break;
-            //}
         }
         if (!clearFlag && !isAlmostCollision)
         {
@@ -274,7 +280,6 @@ public class PlayerManager : MonoBehaviour
     bool WallCheck(RaycastHit2D _hitInfo)
     {
         bool flag = false;
-
         // 宝箱にたどり着いたとき
         if (_hitInfo.collider == null)
         {
@@ -284,15 +289,15 @@ public class PlayerManager : MonoBehaviour
         {
             flag = true;
         }
-        
+
         // 壁に衝突したとき（範囲外のとき）
         if (_hitInfo.transform.tag == "Wall")
         {
-            clearFlag = true;
+            audioSource.PlayOneShot(mistake);
             reTryPanel.SetActive(true);
+            gameStopFlag = true;
             flag = false;
         }
-
         return flag;
     }
 
@@ -317,7 +322,6 @@ public class PlayerManager : MonoBehaviour
     // 今の猫の向きを取得
     string GetplayerInfo()
     {
-
         // 前を向いているとき
         if (playerImage.sprite.name == frontImage.name)
         {
@@ -351,6 +355,7 @@ public class PlayerManager : MonoBehaviour
 
         // プレイヤーの初期位置の保存
         startPosition = this.transform.position;
+        startRotation = this.transform.rotation;
 
         cmdList = _cmdList;
 
@@ -372,8 +377,6 @@ public class PlayerManager : MonoBehaviour
     // 壁にぶつかったとき（範囲外のとき）
     private void OnCollisionEnter2D(Collision2D _collision)
     {
-        print("OnCollision");
-        // 範囲外だったとき
         if (_collision.transform.tag == "Wall")
         {
             clearFlag = true;

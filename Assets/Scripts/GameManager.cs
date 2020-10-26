@@ -85,8 +85,15 @@ public class GameManager : MonoBehaviour
 
     public void ReTry()
     {
+        print("ReTry");
         reTryPanel.SetActive(false);
         playerObj.transform.position = playerStartPos;
+        playerSclipt.setInitPlayerPos();
+
+        // 初期化処理
+        playerSclipt.gameStopFlag = false;
+        playerSclipt.clearFlag = false;
+        playerSclipt.isAlmostCollision = false;
         playerSclipt.setInitPlayerPos();
     }
 
