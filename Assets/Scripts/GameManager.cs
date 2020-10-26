@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
     {
         reTryPanel.SetActive(false);
         playerObj.transform.position = playerStartPos;
+        playerSclipt.setInitPlayerPos();
     }
 
     public void Reload()

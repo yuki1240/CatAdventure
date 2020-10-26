@@ -125,7 +125,7 @@ public class StageCreater : MonoBehaviour
             builder.AppendLine();
         }
 
-        Debug.Log(builder.ToString());
+        // Debug.Log(builder.ToString());
     }
 
     string CellTypeToString(CellType cellType)
