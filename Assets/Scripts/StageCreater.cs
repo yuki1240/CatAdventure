@@ -26,6 +26,8 @@ public class StageCreater : MonoBehaviour
     public int mapWidth = 9;
     public int mapHeight = 9;
 
+    public GameObject PlayerObj { get; private set; }
+
     CellType[,] cells = null;
 
     private void Awake()
@@ -74,8 +76,10 @@ public class StageCreater : MonoBehaviour
     }
 
     // マップに各オブジェクトを配置
-    void CreateMapObjects()
+    public void CreateMapObjects()
     {
+        DestroyMapObjects();
+
         for(int y = 0; y < mapHeight; y++)
         {
             for(int x = 0; x < mapWidth; x++)
@@ -98,10 +102,18 @@ public class StageCreater : MonoBehaviour
                 }
                 if (cellType == CellType.Player)
                 {
-                    var playerObj = Instantiate(player, transform);
-                    playerObj.transform.position = GetSpawnPosition(y, x);
+                    PlayerObj = Instantiate(player, transform);
+                    PlayerObj.transform.position = GetSpawnPosition(y, x);
                 }
             }
+        }
+    }
+
+    void DestroyMapObjects()
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
         }
     }
 

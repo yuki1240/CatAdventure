@@ -54,11 +54,52 @@ public class PlayerManager : MonoBehaviour
 
     
     private Rigidbody2D rb = null;
+    private readonly float RayDistance = 0.6f;
+    private readonly float CharacterMoveUnit = 0.63f;
 
     void Start()
     {
         rb = this.transform.GetComponent<Rigidbody2D>();
         playerImage = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
+    }
+
+    void PlayerWalk(string playerInfo, float rayDistance, float characterMoveUnit)
+    {
+        var currentPos = transform.position;
+        switch (playerInfo)
+        {
+            case "front":
+                RaycastHit2D hitObj = Physics2D.Raycast(currentPos, Vector2.up, rayDistance);
+                if (!WallCheck(hitObj))
+                {
+                    rb.MovePosition(currentPos + Vector3.up * characterMoveUnit);
+                }
+                break;
+
+            case "back":
+                hitObj = Physics2D.Raycast(currentPos, Vector2.down, rayDistance);
+                if (!WallCheck(hitObj))
+                {
+                    rb.MovePosition(currentPos + Vector3.down * characterMoveUnit);
+                }
+                break;
+
+            case "right":
+                hitObj = Physics2D.Raycast(currentPos, Vector2.right, rayDistance);
+                if (!WallCheck(hitObj))
+                {
+                    rb.MovePosition(currentPos + Vector3.right * characterMoveUnit);
+                }
+                break;
+
+            case "left":
+                hitObj = Physics2D.Raycast(currentPos, Vector2.left, rayDistance);
+                if (!WallCheck(hitObj))
+                {
+                    rb.MovePosition(currentPos + Vector3.left * characterMoveUnit);
+                }
+                break;
+        }
     }
 
     IEnumerator PlayerMove()
@@ -69,32 +110,33 @@ public class PlayerManager : MonoBehaviour
         for (int i = 0; i < cmdList.Count; i++)
         {
             string nowCmd = cmdList[i];
-            Vector3 nowPos = transform.position;
 
             // 攻撃
             if (nowCmd == "Attack" && !clearFlag)
             {
+                Vector3 currentPos = transform.position;
+
                 switch (playerInfo)
                 {
                     case "front":
-                        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.6f);
+                        RaycastHit2D hitObj = Physics2D.Raycast(currentPos, Vector2.up, 0.6f);
                         DestoryEnemy(hitObj);
                         break;
 
                     case "back":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.down, 0.6f);
+                        hitObj = Physics2D.Raycast(currentPos, Vector2.down, 0.6f);
 
                         DestoryEnemy(hitObj);
                         break;
 
                     case "right":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.6f);
+                        hitObj = Physics2D.Raycast(currentPos, Vector2.right, 0.6f);
 
                         DestoryEnemy(hitObj);
                         break;
 
                     case "left":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.6f);
+                        hitObj = Physics2D.Raycast(currentPos, Vector2.left, 0.6f);
 
                         DestoryEnemy(hitObj);
                         break;
@@ -105,82 +147,24 @@ public class PlayerManager : MonoBehaviour
             // 1歩前に進む
             else if (nowCmd == "Walk1" && !clearFlag)
             {
-                Vector3 currentPosition = transform.position;
-                switch (playerInfo)
-                {
-                    case "front":
-                        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.6f);
-                        if (!WallCheck(hitObj))
-                        {
-                            rb.MovePosition(currentPosition + new Vector3(0.0f, 0.63f, 0.0f));
-                        }
-                        break;
+                Vector3 currentPos = transform.position;
+                float rayDistance = RayDistance * 1;
+                float characterMoveUnit = CharacterMoveUnit * 1;
 
-                    case "back":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.down, 0.6f);
-                        if (!WallCheck(hitObj))
-                        {
-                            rb.MovePosition(currentPosition + new Vector3(0.0f, -0.63f, 0.0f));
-                        }
-                        break;
+                PlayerWalk(playerInfo, rayDistance, characterMoveUnit);
 
-                    case "right":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.6f);
-                        if (!WallCheck(hitObj))
-                        {
-                            rb.MovePosition(currentPosition + new Vector3(0.63f, 0.0f, 0.0f));
-                        }
-                        break;
-
-                    case "left":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.6f);
-                        if (!WallCheck(hitObj))
-                        {
-                            rb.MovePosition(currentPosition + new Vector3(-0.63f, 0.0f, 0.0f));
-                        }
-                        break;
-                }
                 audioSource.PlayOneShot(actionSE);
             }
 
             // 2歩前に進む
             else if (nowCmd == "Walk2" && !clearFlag)
             {
-                Vector3 currentPosition = transform.position;
-                switch (playerInfo)
-                {
-                    case "front":
-                        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 1.2f);
-                        if (!WallCheck(hitObj))
-                        {
-                            rb.MovePosition(currentPosition + new Vector3(0.0f, 1.26f, 0.0f));
-                        }
-                        break;
+                Vector3 currentPos = transform.position;
+                float rayDistance = RayDistance * 2;
+                float characterMoveUnit = CharacterMoveUnit * 2;
 
-                    case "back":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.down, 1.2f);
-                        if (!WallCheck(hitObj))
-                        {
-                            rb.MovePosition(currentPosition + new Vector3(0.0f, -1.26f, 0.0f));
-                        }
-                        break;
+                PlayerWalk(playerInfo, rayDistance, characterMoveUnit);
 
-                    case "right":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.right, 1.2f);
-                        if (!WallCheck(hitObj))
-                        {
-                            rb.MovePosition(currentPosition + new Vector3(1.26f, 0.0f, 0.0f));
-                        }
-                        break;
-
-                    case "left":
-                        hitObj = Physics2D.Raycast(nowPos, Vector2.left, 1.2f);
-                        if (!WallCheck(hitObj))
-                        {
-                            rb.MovePosition(currentPosition + new Vector3(-1.26f, 0.0f, 0.0f));
-                        }
-                        break;
-                }
                 audioSource.PlayOneShot(actionSE);
             }
 
