@@ -4661,6 +4661,7 @@ MonoBehaviour:
   reTryPanel: {fileID: 28094841}
   clearPanel: {fileID: 1824526459}
   almostPanel: {fileID: 1966176570}
+  StageCreater: {fileID: 1254890289}
   CommandNumber: 20
 --- !u!4 &734801422
 Transform:
