@@ -24,9 +24,6 @@ public class PlayerManager : MonoBehaviour
     public AudioClip actionSE;
     public AudioClip clearSE;
 
-    // ステージがクリアされたらtrue
-    public bool clearFlag = false;
-
     // 宝箱まであと1マスだったら、true
     public bool isAlmostCollision = false;
 
@@ -71,40 +68,46 @@ public class PlayerManager : MonoBehaviour
     void PlayerWalk(string currentDirection, float rayDistance, float characterMoveUnit)
     {
         var currentPos = transform.position;
+        audioSource.PlayOneShot(actionSE);
         switch (currentDirection)
         {
             case "front":
                 RaycastHit2D hitObj = Physics2D.Raycast(currentPos, Vector2.up, rayDistance);
-                if (!WallCheck(hitObj))
-                {
+                //if (!ObjCheck(hitObj))
+                //{
                     rb.MovePosition(currentPos + Vector3.up * characterMoveUnit);
-                }
+                //}
                 break;
 
             case "back":
                 hitObj = Physics2D.Raycast(currentPos, Vector2.down, rayDistance);
-                if (!WallCheck(hitObj))
-                {
-                    rb.MovePosition(currentPos + Vector3.down * characterMoveUnit);
-                }
+                //if (!ObjCheck(hitObj))
+                //{
+                   rb.MovePosition(currentPos + Vector3.down * characterMoveUnit);
+                //}
                 break;
 
             case "right":
                 hitObj = Physics2D.Raycast(currentPos, Vector2.right, rayDistance);
-                if (!WallCheck(hitObj))
-                {
+                //if (!ObjCheck(hitObj))
+                //{
                     rb.MovePosition(currentPos + Vector3.right * characterMoveUnit);
-                }
+                //}
                 break;
 
             case "left":
                 hitObj = Physics2D.Raycast(currentPos, Vector2.left, rayDistance);
-                if (!WallCheck(hitObj))
-                {
+                //if (!ObjCheck(hitObj))
+                //{
                     rb.MovePosition(currentPos + Vector3.left * characterMoveUnit);
-                }
+                //}
                 break;
         }
+    }
+
+    void PlayerTrun()
+    {
+
     }
 
     IEnumerator PlayerMove()
@@ -119,7 +122,7 @@ public class PlayerManager : MonoBehaviour
         for (int i = 0; i < cmdList.Count; i++)
         {
             // 攻撃コマンド
-            if (cmdList[i] == "Attack" && !clearFlag)
+            if (cmdList[i] == "Attack")
             {
 
                 switch (currentDirection)
@@ -151,30 +154,23 @@ public class PlayerManager : MonoBehaviour
             }
 
             // 1歩前に進む
-            else if (cmdList[i] == "Walk1" && !clearFlag)
+            else if (cmdList[i] == "Walk1")
             {
-                
                 float rayDistance = RayDistance * 1;
                 float characterMoveUnit = CharacterMoveUnit * 1;
-
                 PlayerWalk(currentDirection, rayDistance, characterMoveUnit);
-
-                audioSource.PlayOneShot(actionSE);
             }
 
             // 2歩前に進む
-            else if (cmdList[i] == "Walk2" && !clearFlag)
+            else if (cmdList[i] == "Walk2")
             {
                 float rayDistance = RayDistance * 2;
                 float characterMoveUnit = CharacterMoveUnit * 2;
-
                 PlayerWalk(currentDirection, rayDistance, characterMoveUnit);
-
-                audioSource.PlayOneShot(actionSE);
             }
 
             // 右回転
-            else if (cmdList[i] == "TrunRight" && !clearFlag)
+            else if (cmdList[i] == "TrunRight")
             {
                 Vector3 currentPosition = transform.position;
 
@@ -203,7 +199,7 @@ public class PlayerManager : MonoBehaviour
             }
 
             // 左回転
-            else if (cmdList[i] == "TrunLeft" && !clearFlag)
+            else if (cmdList[i] == "TrunLeft")
             {
                 Vector3 currentPosition = transform.position;
 
@@ -231,12 +227,6 @@ public class PlayerManager : MonoBehaviour
                 currentDirection = GetcurrentDirection();
             }
 
-            // ゲームの中断フラグが立っていないかをチェック
-            if (gameStopFlag)
-            {
-                yield break;
-            }
-
             // 1秒間のスリープ処理
             if (i != cmdList.Count - 1)
             {
@@ -250,37 +240,18 @@ public class PlayerManager : MonoBehaviour
             }
 
         }
-        if (!clearFlag && !isAlmostCollision)
+        if (!isAlmostCollision)
         {
             yield return new WaitForSeconds(0.5f);
             audioSource.PlayOneShot(mistake);
             reTryPanel.SetActive(true);
         }
-    }
 
-    // プレイヤーの前にオブジェクトがあればtrueを返す
-    bool WallCheck(RaycastHit2D _hitInfo)
-    {
-        bool flag = false;
-        // 宝箱にたどり着いたとき
-        if (_hitInfo.collider == null)
+        // ゲームの中断フラグが立っていないかをチェック
+        if (gameStopFlag)
         {
-            return false;
+            yield break;
         }
-        if (_hitInfo.transform.tag != "JuweryBox")
-        {
-            flag = true;
-        }
-
-        // 壁に衝突したとき（範囲外のとき）
-        if (_hitInfo.transform.tag == "Wall")
-        {
-            audioSource.PlayOneShot(mistake);
-            reTryPanel.SetActive(true);
-            gameStopFlag = true;
-            flag = false;
-        }
-        return flag;
     }
 
     // 敵の削除（待機する時間を返す）
@@ -346,7 +317,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (_collider.transform.tag == "JuweryBox")
         {
-            clearFlag = true;
+            gameStopFlag = true;
             clearPanel.SetActive(true);
             audioSource.PlayOneShot(clearSE);
         }
@@ -357,8 +328,9 @@ public class PlayerManager : MonoBehaviour
     {
         if (_collision.transform.tag == "Wall")
         {
-            clearFlag = true;
+            gameStopFlag = true;
             reTryPanel.SetActive(true);
+            audioSource.PlayOneShot(mistake);
         }
     }
 
