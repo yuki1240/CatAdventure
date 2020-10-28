@@ -11,20 +11,13 @@ public class PlayerManager : MonoBehaviour
     // 猫の移動速度
     public float speed = 1.0f;
 
-    // プレイヤーの初期位置
-    public Vector3 startPosition;
-
-    // プレイヤーの初期の傾き
-    public Quaternion startRotation;
-    
-
-    // それぞれの向きの猫画像
+    // 各方向の猫画像
     public Sprite frontImage;
     public Sprite backImage;
     public Sprite rightImage;
     public Sprite leftImage;
 
-    // 音源の準備
+    // 音源
     public AudioSource audioSource;
     public AudioClip mistake;
     public AudioClip enemyDeath;
@@ -49,6 +42,10 @@ public class PlayerManager : MonoBehaviour
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
 
+
+    StageCreater StageCreater;
+
+
     // 今の状態のプレイヤー画像
     SpriteRenderer playerImage;
 
@@ -59,14 +56,22 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        rb = this.transform.GetComponent<Rigidbody2D>();
-        playerImage = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
+        rb = transform.GetComponent<Rigidbody2D>();
+        StageCreater = GameObject.FindWithTag("Wall").GetComponent<StageCreater>();
+        playerImage = StageCreater.PlayerObj.GetComponent<SpriteRenderer>();
+
+        //////////////////////////////////////////////////// 以下の3行がエラーになる理由
+        // GameManager.StageCreater.PlayerObj
+
+        // playerImage = StageCreater.PlayerObj.GetComponent<SpriteRenderer>();
+
+        // playerImage = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
     }
 
-    void PlayerWalk(string playerInfo, float rayDistance, float characterMoveUnit)
+    void PlayerWalk(string currentDirection, float rayDistance, float characterMoveUnit)
     {
         var currentPos = transform.position;
-        switch (playerInfo)
+        switch (currentDirection)
         {
             case "front":
                 RaycastHit2D hitObj = Physics2D.Raycast(currentPos, Vector2.up, rayDistance);
@@ -104,19 +109,20 @@ public class PlayerManager : MonoBehaviour
 
     IEnumerator PlayerMove()
     {
-        // 今の向き（初期値 → front）
-        string playerInfo = "front";
+
+        // 今の位置
+        Vector3 currentPos = transform.position;
+
+        // 今の向き
+        string currentDirection = "front";
 
         for (int i = 0; i < cmdList.Count; i++)
         {
-            string nowCmd = cmdList[i];
-
-            // 攻撃
-            if (nowCmd == "Attack" && !clearFlag)
+            // 攻撃コマンド
+            if (cmdList[i] == "Attack" && !clearFlag)
             {
-                Vector3 currentPos = transform.position;
 
-                switch (playerInfo)
+                switch (currentDirection)
                 {
                     case "front":
                         RaycastHit2D hitObj = Physics2D.Raycast(currentPos, Vector2.up, 0.6f);
@@ -145,35 +151,34 @@ public class PlayerManager : MonoBehaviour
             }
 
             // 1歩前に進む
-            else if (nowCmd == "Walk1" && !clearFlag)
+            else if (cmdList[i] == "Walk1" && !clearFlag)
             {
-                Vector3 currentPos = transform.position;
+                
                 float rayDistance = RayDistance * 1;
                 float characterMoveUnit = CharacterMoveUnit * 1;
 
-                PlayerWalk(playerInfo, rayDistance, characterMoveUnit);
+                PlayerWalk(currentDirection, rayDistance, characterMoveUnit);
 
                 audioSource.PlayOneShot(actionSE);
             }
 
             // 2歩前に進む
-            else if (nowCmd == "Walk2" && !clearFlag)
+            else if (cmdList[i] == "Walk2" && !clearFlag)
             {
-                Vector3 currentPos = transform.position;
                 float rayDistance = RayDistance * 2;
                 float characterMoveUnit = CharacterMoveUnit * 2;
 
-                PlayerWalk(playerInfo, rayDistance, characterMoveUnit);
+                PlayerWalk(currentDirection, rayDistance, characterMoveUnit);
 
                 audioSource.PlayOneShot(actionSE);
             }
 
             // 右回転
-            else if (nowCmd == "TrunRight" && !clearFlag)
+            else if (cmdList[i] == "TrunRight" && !clearFlag)
             {
                 Vector3 currentPosition = transform.position;
 
-                switch (playerInfo)
+                switch (currentDirection)
                 {
                     case "front":
                         playerImage.sprite = rightImage;
@@ -194,15 +199,15 @@ public class PlayerManager : MonoBehaviour
                 audioSource.PlayOneShot(actionSE);
 
                 // 回転が終わったら今の向きを代入する
-                playerInfo = GetplayerInfo();
+                currentDirection = GetcurrentDirection();
             }
 
             // 左回転
-            else if (nowCmd == "TrunLeft" && !clearFlag)
+            else if (cmdList[i] == "TrunLeft" && !clearFlag)
             {
                 Vector3 currentPosition = transform.position;
 
-                switch (playerInfo)
+                switch (currentDirection)
                 {
                     case "front":
                         playerImage.sprite = leftImage;
@@ -223,7 +228,7 @@ public class PlayerManager : MonoBehaviour
                 audioSource.PlayOneShot(actionSE);
 
                 // 回転が終わったら今の向きを代入する
-                playerInfo = GetplayerInfo();
+                currentDirection = GetcurrentDirection();
             }
 
             // ゲームの中断フラグが立っていないかをチェック
@@ -240,7 +245,7 @@ public class PlayerManager : MonoBehaviour
             // 最後のコマンドを実行時
             else
             {
-                DisplayAlmostPanel1(playerInfo);
+                DisplayAlmostPanel1(currentDirection);
                 yield return new WaitForSeconds(0.5f);
             }
 
@@ -251,13 +256,6 @@ public class PlayerManager : MonoBehaviour
             audioSource.PlayOneShot(mistake);
             reTryPanel.SetActive(true);
         }
-    }
-
-    // プレイヤーの座標と画像を初期値に戻す
-    public void setInitPlayerPos()
-    {
-        playerImage.sprite = frontImage;
-        this.transform.position = startPosition;
     }
 
     // プレイヤーの前にオブジェクトがあればtrueを返す
@@ -304,7 +302,7 @@ public class PlayerManager : MonoBehaviour
     }
 
     // 今の猫の向きを取得
-    string GetplayerInfo()
+    string GetcurrentDirection()
     {
         // 前を向いているとき
         if (playerImage.sprite.name == frontImage.name)
@@ -337,10 +335,6 @@ public class PlayerManager : MonoBehaviour
         clearPanel = _clearObj;
         almostPanel = _almostObj;
 
-        // プレイヤーの初期位置の保存
-        startPosition = this.transform.position;
-        startRotation = this.transform.rotation;
-
         cmdList = _cmdList;
 
         // 受け取ったコマンド情報を元に猫を動かす
@@ -370,12 +364,12 @@ public class PlayerManager : MonoBehaviour
 
 
     // Almostパネルを表示するかのチェック（各方向の確認）
-    void DisplayAlmostPanel1(string _playerInfo)
+    void DisplayAlmostPanel1(string _currentDirection)
     {
         Vector3 nowPos = transform.position;
         // nowPos = Vector3(nowPos.x, nowPos.y, nowPos.z);
 
-        switch (_playerInfo)
+        switch (_currentDirection)
         {
             case "front":
                 RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.6f);
@@ -414,53 +408,4 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    // 2秒間待機する
-    IEnumerator Sleep()
-    {
-        yield return new WaitForSeconds(2.0f);
-    }
 }
-
-
-
-
-
-//string GetDirectionObj(string playerInfo)
-//{
-//    Vector3 nowPos = transform.position;
-
-//    // 宝箱との衝突判定(false = 当たっていない)
-//    string obj = null;
-
-//    switch (playerInfo)
-//    {
-//        case "front":
-//            RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 1.2f);
-//            obj = GetCollisionObj(hitObj);
-//            break;
-
-//        case "right":
-//            hitObj = Physics2D.Raycast(nowPos, Vector2.right, 1.2f);
-//            obj = GetCollisionObj(hitObj);
-//            break;
-
-//        case "left":
-//            hitObj = Physics2D.Raycast(nowPos, Vector2.left, 1.2f);
-//            obj = GetCollisionObj(hitObj);
-//            break;
-//    }
-
-//    return obj;
-//}
-
-//string GetCollisionObj(RaycastHit2D hitInfo)
-//{
-//    if (hitInfo.collider == null)
-//    {
-//        return null;
-//    }
-//    else
-//    {
-//        return hitInfo.collider.tag;
-//    }
-//}

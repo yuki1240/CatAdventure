@@ -44,8 +44,6 @@ public class GameManager : MonoBehaviour
         // コマンドリストの初期化
         cmdList.Clear();
 
-        // print("cmdList : " + cmdList.Count);
-
         Image dropImage;
 
         // Framesの子のFremeImage1～Nまでを取得

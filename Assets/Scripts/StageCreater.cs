@@ -6,7 +6,8 @@ using System.Text;
 
 public class StageCreater : MonoBehaviour
 {
-    public enum CellType {
+    public enum CellType 
+    {
         Empty,
         Block,
         JuweryBox,
@@ -26,6 +27,7 @@ public class StageCreater : MonoBehaviour
     public int mapWidth = 9;
     public int mapHeight = 9;
 
+    // 外部から参照できるが値は変更不可
     public GameObject PlayerObj { get; private set; }
 
     CellType[,] cells = null;
