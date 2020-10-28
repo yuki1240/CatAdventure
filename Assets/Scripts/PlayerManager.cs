@@ -63,7 +63,6 @@ public class PlayerManager : MonoBehaviour
 
         ///////////////////////////////////////////////////////////////////////////////////////////// 以下がエラーになる理由
 
-        // GameManager.StageCreater.PlayerObj 
         // ①これをGameManagerのStageCreaterから取得しようとして、エラーになった。
         // GameManagerではpublicで、かつStageCreaterはDestoryされていないのになぜ？？
 
@@ -405,43 +404,51 @@ public class PlayerManager : MonoBehaviour
     // Almostパネルを表示するかのチェック（各方向の確認）
     void DisplayCheck(string _currentDirection)
     {
+        // あと一歩で宝箱かどうか？
+        // Yes =>「おしい表示」
+        // No => 何もしない
+        if (JuweryBoxCheck(_currentDirection))
+        {
+            isAlmostCollision = true;
+            StartCoroutine(DisplayAlmostPanel());
+        }
+    }
+
+    // Almostパネルを表示するかのチェック（1マス先が宝箱だったら、2秒間表示する）
+    IEnumerator DisplayAlmostPanel()
+    {
+        almostPanel.SetActive(true);
+        yield return new WaitForSeconds(2.0f);
+        almostPanel.SetActive(false);
+    }
+
+    // 一歩先が宝箱かどうかを返す関数
+    bool JuweryBoxCheck(string _currentDirection)
+    {
         Vector3 nowPos = transform.position;
-        // nowPos = Vector3(nowPos.x, nowPos.y, nowPos.z);
+        Vector2 direction = Vector2.zero;
+        float distance = 0.6f;
 
         switch (_currentDirection)
         {
             case "front":
-                RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.6f);
-                StartCoroutine(DisplayAlmostPanel(hitObj));
+                direction = Vector2.up;
                 break;
-
             case "right":
-                hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.6f);
-                StartCoroutine(DisplayAlmostPanel(hitObj));
+                direction = Vector2.right;
                 break;
-
             case "left":
-                hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.6f);
-                StartCoroutine(DisplayAlmostPanel(hitObj));
+                direction = Vector2.left;
                 break;
         }
-    }
 
+        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, direction, distance);
 
-    // Almostパネルを表示するかのチェック（1マス先が宝箱だったら、2秒間表示する）
-    IEnumerator DisplayAlmostPanel(RaycastHit2D _hitInfo)
-    {
-        if (_hitInfo.collider == null)
+        if (hitObj.collider == null)
         {
-            yield break;
+            return false;
         }
-        else if (_hitInfo.transform.tag == "JuweryBox")
-        {
-            isAlmostCollision = true;
-            almostPanel.SetActive(true);
-            yield return new WaitForSeconds(2.0f);
-            almostPanel.SetActive(false);
-        }
-    }
 
+        return hitObj.transform.tag == "JuweryBox";
+    }
 }
