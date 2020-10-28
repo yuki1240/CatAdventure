@@ -74,7 +74,6 @@ public class GameManager : MonoBehaviour
 
     public void ReTry()
     {
-        print("ReTry");
         reTryPanel.SetActive(false);
      
         // 初期化処理

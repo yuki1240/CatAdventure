@@ -43,6 +43,10 @@ public class PlayerManager : MonoBehaviour
     StageCreater StageCreater;
 
 
+    // プレイヤーの方向
+    string currentDirection = "front";
+
+
     // 今の状態のプレイヤー画像
     SpriteRenderer playerImage;
 
@@ -65,92 +69,182 @@ public class PlayerManager : MonoBehaviour
         // playerImage = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
     }
 
-    void PlayerWalk(string currentDirection, float rayDistance, float characterMoveUnit)
+    void PlayerWalk(Vector3 _currentPos, float _rayDistance, float _characterMoveUnit)
     {
-        var currentPos = transform.position;
         audioSource.PlayOneShot(actionSE);
         switch (currentDirection)
         {
             case "front":
-                RaycastHit2D hitObj = Physics2D.Raycast(currentPos, Vector2.up, rayDistance);
-                //if (!ObjCheck(hitObj))
-                //{
-                    rb.MovePosition(currentPos + Vector3.up * characterMoveUnit);
-                //}
+                RaycastHit2D hitInfo = Physics2D.Raycast(_currentPos, Vector2.up, _rayDistance);
+
+                if (!ObjCollisionCheck(hitInfo))
+                {
+                    rb.MovePosition(_currentPos + Vector3.up * _characterMoveUnit);
+                }
                 break;
 
             case "back":
-                hitObj = Physics2D.Raycast(currentPos, Vector2.down, rayDistance);
-                //if (!ObjCheck(hitObj))
-                //{
-                   rb.MovePosition(currentPos + Vector3.down * characterMoveUnit);
-                //}
+                hitInfo = Physics2D.Raycast(_currentPos, Vector2.down, _rayDistance);
+                if (!ObjCollisionCheck(hitInfo))
+                {
+                    rb.MovePosition(_currentPos + Vector3.down * _characterMoveUnit);
+                }
                 break;
 
             case "right":
-                hitObj = Physics2D.Raycast(currentPos, Vector2.right, rayDistance);
-                //if (!ObjCheck(hitObj))
-                //{
-                    rb.MovePosition(currentPos + Vector3.right * characterMoveUnit);
-                //}
+                hitInfo = Physics2D.Raycast(_currentPos, Vector2.right, _rayDistance);
+                if (!ObjCollisionCheck(hitInfo))
+                {
+                    rb.MovePosition(_currentPos + Vector3.right * _characterMoveUnit);
+                }
                 break;
 
             case "left":
-                hitObj = Physics2D.Raycast(currentPos, Vector2.left, rayDistance);
-                //if (!ObjCheck(hitObj))
-                //{
-                    rb.MovePosition(currentPos + Vector3.left * characterMoveUnit);
-                //}
+                hitInfo = Physics2D.Raycast(_currentPos, Vector2.left, _rayDistance);
+                if (!ObjCollisionCheck(hitInfo))
+                {
+                    rb.MovePosition(_currentPos + Vector3.left * _characterMoveUnit);
+                }
                 break;
         }
     }
 
-    void PlayerTrun()
+    void PlayerTrun(string _commandDirection)
     {
+        audioSource.PlayOneShot(actionSE);
+        //switch (_currentDirection)
+        //{
+        //    case "front":
+        //        if (_commandDirection == "TrunRight")
+        //        {
+        //            playerImage.sprite = rightImage;
+        //        }
+        //        else
+        //        {
+        //            playerImage.sprite = Image;
+        //        }
+        //        break;
 
+        //    case "back":
+        //        if (_commandDirection == "TrunRight")
+        //        {
+        //            playerImage.sprite = leftImage;
+        //        }
+        //        else
+        //        {
+        //            playerImage.sprite = rightImage;
+        //        }
+        //        break;
+
+        //    case "right":
+        //        if (_commandDirection == "TrunRight")
+        //        {
+        //            playerImage.sprite = backImage;
+        //        }
+        //        else
+        //        {
+        //            playerImage.sprite = frontImage;
+        //        }
+        //        break;
+
+        //    case "left":
+        //        if (_commandDirection == "TrunRight")
+        //        {
+        //            playerImage.sprite = frontImage;
+        //        }
+        //        else
+        //        {
+        //            playerImage.sprite = backImage;
+        //        }
+        //        break;
+        //}
+
+        ///////////////////////////////////////////////////////////// 上と下どっちが見やすい？
+
+        if (_commandDirection == "TrunRight")
+        {
+            switch (currentDirection)
+            {
+                case "front":
+                    playerImage.sprite = rightImage;
+                    break;
+
+                case "back":
+                    playerImage.sprite = leftImage;
+                    break;
+
+                case "right":
+                    playerImage.sprite = backImage;
+                    break;
+
+                case "left":
+                    playerImage.sprite = frontImage;
+                    break;
+            }
+        }
+        if (_commandDirection == "TrunLeft")
+        {
+            switch (currentDirection)
+            {
+                case "front":
+                    playerImage.sprite = leftImage;
+                    break;
+
+                case "back":
+                    playerImage.sprite = rightImage;
+                    break;
+
+                case "right":
+                    playerImage.sprite = frontImage;
+                    break;
+
+                case "left":
+                    playerImage.sprite = backImage;
+                    break;
+            }
+        }
+
+        currentDirection = GetCurrentDirection();
+    }
+
+    void PlayerAttack(Vector3 _currentPos)
+    {
+        switch (currentDirection)
+        {
+            case "front":
+                RaycastHit2D hitInfo = Physics2D.Raycast(_currentPos, Vector2.up, 0.6f);
+                DestoryEnemy(hitInfo);
+                break;
+
+            case "back":
+                hitInfo = Physics2D.Raycast(_currentPos, Vector2.down, 0.6f);
+                DestoryEnemy(hitInfo);
+                break;
+
+            case "right":
+                hitInfo = Physics2D.Raycast(_currentPos, Vector2.right, 0.6f);
+                DestoryEnemy(hitInfo);
+                break;
+
+            case "left":
+                hitInfo = Physics2D.Raycast(_currentPos, Vector2.left, 0.6f);
+                DestoryEnemy(hitInfo);
+                break;
+
+        }
     }
 
     IEnumerator PlayerMove()
     {
-
-        // 今の位置
-        Vector3 currentPos = transform.position;
-
-        // 今の向き
-        string currentDirection = "front";
-
         for (int i = 0; i < cmdList.Count; i++)
         {
+            // 今の位置
+            Vector3 currentPos = transform.position;
+
             // 攻撃コマンド
             if (cmdList[i] == "Attack")
             {
-
-                switch (currentDirection)
-                {
-                    case "front":
-                        RaycastHit2D hitObj = Physics2D.Raycast(currentPos, Vector2.up, 0.6f);
-                        DestoryEnemy(hitObj);
-                        break;
-
-                    case "back":
-                        hitObj = Physics2D.Raycast(currentPos, Vector2.down, 0.6f);
-
-                        DestoryEnemy(hitObj);
-                        break;
-
-                    case "right":
-                        hitObj = Physics2D.Raycast(currentPos, Vector2.right, 0.6f);
-
-                        DestoryEnemy(hitObj);
-                        break;
-
-                    case "left":
-                        hitObj = Physics2D.Raycast(currentPos, Vector2.left, 0.6f);
-
-                        DestoryEnemy(hitObj);
-                        break;
-
-                }
+                PlayerAttack(currentPos);
             }
 
             // 1歩前に進む
@@ -158,7 +252,7 @@ public class PlayerManager : MonoBehaviour
             {
                 float rayDistance = RayDistance * 1;
                 float characterMoveUnit = CharacterMoveUnit * 1;
-                PlayerWalk(currentDirection, rayDistance, characterMoveUnit);
+                PlayerWalk(currentPos, rayDistance, characterMoveUnit);
             }
 
             // 2歩前に進む
@@ -166,65 +260,19 @@ public class PlayerManager : MonoBehaviour
             {
                 float rayDistance = RayDistance * 2;
                 float characterMoveUnit = CharacterMoveUnit * 2;
-                PlayerWalk(currentDirection, rayDistance, characterMoveUnit);
+                PlayerWalk(currentPos, rayDistance, characterMoveUnit);
             }
 
             // 右回転
             else if (cmdList[i] == "TrunRight")
             {
-                Vector3 currentPosition = transform.position;
-
-                switch (currentDirection)
-                {
-                    case "front":
-                        playerImage.sprite = rightImage;
-                        break;
-
-                    case "back":
-                        playerImage.sprite = leftImage;
-                        break;
-
-                    case "right":
-                        playerImage.sprite = backImage;
-                        break;
-
-                    case "left":
-                        playerImage.sprite = frontImage;
-                        break;
-                }
-                audioSource.PlayOneShot(actionSE);
-
-                // 回転が終わったら今の向きを代入する
-                currentDirection = GetcurrentDirection();
+                PlayerTrun(cmdList[i]);
             }
 
             // 左回転
             else if (cmdList[i] == "TrunLeft")
             {
-                Vector3 currentPosition = transform.position;
-
-                switch (currentDirection)
-                {
-                    case "front":
-                        playerImage.sprite = leftImage;
-                        break;
-
-                    case "back":
-                        playerImage.sprite = rightImage;
-                        break;
-
-                    case "right":
-                        playerImage.sprite = frontImage;
-                        break;
-
-                    case "left":
-                        playerImage.sprite = backImage;
-                        break;
-                }
-                audioSource.PlayOneShot(actionSE);
-
-                // 回転が終わったら今の向きを代入する
-                currentDirection = GetcurrentDirection();
+                PlayerTrun(cmdList[i]);
             }
 
             // 1秒間のスリープ処理
@@ -236,21 +284,36 @@ public class PlayerManager : MonoBehaviour
             else
             {
                 DisplayAlmostPanel1(currentDirection);
-                yield return new WaitForSeconds(0.5f);
+                gameStopFlag = true;
+                yield return new WaitForSeconds(1.0f);
             }
 
+            // ゲームオーバーフラグが立っていたらループを抜ける
+            if (gameStopFlag || isAlmostCollision)
+            {
+                reTryPanel.SetActive(true);
+                audioSource.PlayOneShot(mistake);
+                yield break;
+            }
         }
-        if (!isAlmostCollision)
-        {
-            yield return new WaitForSeconds(0.5f);
-            audioSource.PlayOneShot(mistake);
-            reTryPanel.SetActive(true);
-        }
+    }
 
-        // ゲームの中断フラグが立っていないかをチェック
-        if (gameStopFlag)
+    bool ObjCollisionCheck(RaycastHit2D _hitInfo)
+    {
+        if (_hitInfo.collider == null)
         {
-            yield break;
+            print("retrun");
+            return false;
+        }
+        else if (_hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall")
+        {
+            print("else : " + _hitInfo.transform.tag);
+            return true;
+        }
+        else
+        {
+            print(_hitInfo.transform.tag);
+            return false;
         }
     }
 
@@ -273,7 +336,7 @@ public class PlayerManager : MonoBehaviour
     }
 
     // 今の猫の向きを取得
-    string GetcurrentDirection()
+    string GetCurrentDirection()
     {
         // 前を向いているとき
         if (playerImage.sprite.name == frontImage.name)
@@ -317,7 +380,6 @@ public class PlayerManager : MonoBehaviour
     {
         if (_collider.transform.tag == "JuweryBox")
         {
-            gameStopFlag = true;
             clearPanel.SetActive(true);
             audioSource.PlayOneShot(clearSE);
         }
