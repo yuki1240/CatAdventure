@@ -119,7 +119,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.5
-  startPosition: {x: 0, y: 0, z: 0}
   frontImage: {fileID: -3287367053296241113, guid: b0111d74c81c933449fb9bdc9f431f2d,
     type: 3}
   backImage: {fileID: 7364682651488144517, guid: b0111d74c81c933449fb9bdc9f431f2d,
@@ -129,10 +128,13 @@ MonoBehaviour:
   leftImage: {fileID: -4709456396536258026, guid: b0111d74c81c933449fb9bdc9f431f2d,
     type: 3}
   audioSource: {fileID: -7967006024086673514}
-  mistake: {fileID: 8300000, guid: ad4d0f0c9f52fe6428ccd22c1bd335ec, type: 3}
-  enemyDeath: {fileID: 8300000, guid: 09e8cdad4e937094ebf770b14c7f937b, type: 3}
+  mistakeSE: {fileID: 8300000, guid: ad4d0f0c9f52fe6428ccd22c1bd335ec, type: 3}
+  enemyDeathSE: {fileID: 8300000, guid: 09e8cdad4e937094ebf770b14c7f937b, type: 3}
   actionSE: {fileID: 8300000, guid: 0fc211f309634234190742c637953cfe, type: 3}
   clearSE: {fileID: 8300000, guid: bb3be1e0fbd637d40baf8ef44fda9b4c, type: 3}
+  AttackSE: {fileID: 8300000, guid: 2e1543264d1940f458608e75c0d2b315, type: 3}
+  isAlmostCollision: 0
+  gameStopFlag: 0
 --- !u!61 &3511279200480352497
 BoxCollider2D:
   m_ObjectHideFlags: 0

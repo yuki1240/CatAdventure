@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public GameObject clearPanel;
     public GameObject almostPanel;
 
+    // ①これをPlayerManagerから取得しようとして、エラーになった
     public StageCreater StageCreater;
 
     private PlayerManager playerSclipt;
@@ -25,17 +26,6 @@ public class GameManager : MonoBehaviour
     public List<string> cmdList = new List<string>();
 
     public int CommandNumber = 20;
-
-    private void Start()
-    {
-        // データのセーブ
-        // SaveData.Instance.Save();      
-    }
-
-    void Update()
-    {
-
-    }
 
     public void RunButtonClick()
     {
@@ -80,7 +70,7 @@ public class GameManager : MonoBehaviour
         StageCreater.CreateMapObjects();
     }
 
-    public void Reload()
+    public void ReLoad()
     {
         SceneManager.LoadScene("Main");
     }

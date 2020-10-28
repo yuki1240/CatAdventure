@@ -19,10 +19,11 @@ public class PlayerManager : MonoBehaviour
 
     // 音源
     public AudioSource audioSource;
-    public AudioClip mistake;
-    public AudioClip enemyDeath;
+    public AudioClip mistakeSE;
+    public AudioClip enemyDeathSE;
     public AudioClip actionSE;
     public AudioClip clearSE;
+    public AudioClip AttackSE;
 
     // 宝箱まであと1マスだったら、true
     public bool isAlmostCollision = false;
@@ -59,14 +60,15 @@ public class PlayerManager : MonoBehaviour
     {
         rb = transform.GetComponent<Rigidbody2D>();
         StageCreater = GameObject.FindWithTag("Wall").GetComponent<StageCreater>();
+
+        ///////////////////////////////////////////////////////////////////////////////////////////// 以下がエラーになる理由
+
+        // GameManager.StageCreater.PlayerObj 
+        // ①これをGameManagerのStageCreaterから取得しようとして、エラーになった。
+        // GameManagerではpublicで、かつStageCreaterはDestoryされていないのになぜ？？
+
+        // これはOK
         playerImage = StageCreater.PlayerObj.GetComponent<SpriteRenderer>();
-
-        //////////////////////////////////////////////////// 以下の3行がエラーになる理由
-        // GameManager.StageCreater.PlayerObj
-
-        // playerImage = StageCreater.PlayerObj.GetComponent<SpriteRenderer>();
-
-        // playerImage = GameObject.FindWithTag("Player").GetComponent<SpriteRenderer>();
     }
 
     void PlayerWalk(Vector3 _currentPos, float _rayDistance, float _characterMoveUnit)
@@ -112,6 +114,7 @@ public class PlayerManager : MonoBehaviour
     void PlayerTrun(string _commandDirection)
     {
         audioSource.PlayOneShot(actionSE);
+
         //switch (_currentDirection)
         //{
         //    case "front":
@@ -209,26 +212,28 @@ public class PlayerManager : MonoBehaviour
 
     void PlayerAttack(Vector3 _currentPos)
     {
+        audioSource.PlayOneShot(AttackSE);
         switch (currentDirection)
         {
             case "front":
                 RaycastHit2D hitInfo = Physics2D.Raycast(_currentPos, Vector2.up, 0.6f);
-                DestoryEnemy(hitInfo);
+                DestoryCheck(hitInfo);
+                // ↑の処理を呼んだあとに0.5秒だけ遅らせたい /////////////////////////////////////////////////////////////////////////////
                 break;
 
             case "back":
                 hitInfo = Physics2D.Raycast(_currentPos, Vector2.down, 0.6f);
-                DestoryEnemy(hitInfo);
+                DestoryCheck(hitInfo);
                 break;
 
             case "right":
                 hitInfo = Physics2D.Raycast(_currentPos, Vector2.right, 0.6f);
-                DestoryEnemy(hitInfo);
+                DestoryCheck(hitInfo);
                 break;
 
             case "left":
                 hitInfo = Physics2D.Raycast(_currentPos, Vector2.left, 0.6f);
-                DestoryEnemy(hitInfo);
+                DestoryCheck(hitInfo);
                 break;
 
         }
@@ -275,39 +280,34 @@ public class PlayerManager : MonoBehaviour
                 PlayerTrun(cmdList[i]);
             }
 
-            // 1秒間のスリープ処理
-            if (i != cmdList.Count - 1)
-            {
-                yield return new WaitForSeconds(1.0f);
-            }
+            yield return new WaitForSeconds(1.0f);
+
             // 最後のコマンドを実行時
-            else
+            if (i == cmdList.Count - 1)
             {
-                DisplayAlmostPanel1(currentDirection);
+                DisplayCheck(currentDirection);
                 gameStopFlag = true;
-                yield return new WaitForSeconds(1.0f);
             }
 
             // ゲームオーバーフラグが立っていたらループを抜ける
             if (gameStopFlag || isAlmostCollision)
             {
                 reTryPanel.SetActive(true);
-                audioSource.PlayOneShot(mistake);
+                audioSource.PlayOneShot(mistakeSE);
                 yield break;
             }
         }
     }
 
+    // 進もうとしているマスに、オブジェクトがあるかどうかをチェック
     bool ObjCollisionCheck(RaycastHit2D _hitInfo)
     {
         if (_hitInfo.collider == null)
         {
-            print("retrun");
             return false;
         }
-        else if (_hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall")
+        else if (_hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall" || _hitInfo.transform.tag == "Enemy")
         {
-            print("else : " + _hitInfo.transform.tag);
             return true;
         }
         else
@@ -317,22 +317,27 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    // 敵の削除（待機する時間を返す）
-    void DestoryEnemy(RaycastHit2D _hitInfo)
+    // 敵の削除
+    void DestoryCheck(RaycastHit2D _hitInfo)
     {
         if (_hitInfo.collider == null)
         {
             return;
         }
-        // 敵だったとき1秒後に削除して、さらに1秒間待機する
-        if (_hitInfo.transform.tag == "Enemy")
+        else if (_hitInfo.transform.tag == "Enemy")
         {
-            audioSource.PlayOneShot(enemyDeath);
-            _hitInfo.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
-
-            // 失敗時にまた表示したいので、Destroyしないで、非表示にして1秒間待ちたい//////////////////////////////////////////////////////////////////////////
-            Destroy(_hitInfo.transform.gameObject, 1);
+            // この処理を呼んだあとに0.5秒だけ遅らせたい /////////////////////////////////////////////////////////////////////////////
+            StartCoroutine(DestoryEnemy(_hitInfo));
         }
+    }
+
+    // 敵だったとき、0.5秒後に削除
+    IEnumerator DestoryEnemy(RaycastHit2D _hitInfo)
+    {
+        yield return new WaitForSeconds(1.0f);
+        _hitInfo.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
+        audioSource.PlayOneShot(enemyDeathSE);
+        Destroy(_hitInfo.transform.gameObject, 1.0f);
     }
 
     // 今の猫の向きを取得
@@ -392,13 +397,13 @@ public class PlayerManager : MonoBehaviour
         {
             gameStopFlag = true;
             reTryPanel.SetActive(true);
-            audioSource.PlayOneShot(mistake);
+            audioSource.PlayOneShot(mistakeSE);
         }
     }
 
 
     // Almostパネルを表示するかのチェック（各方向の確認）
-    void DisplayAlmostPanel1(string _currentDirection)
+    void DisplayCheck(string _currentDirection)
     {
         Vector3 nowPos = transform.position;
         // nowPos = Vector3(nowPos.x, nowPos.y, nowPos.z);
@@ -407,38 +412,35 @@ public class PlayerManager : MonoBehaviour
         {
             case "front":
                 RaycastHit2D hitObj = Physics2D.Raycast(nowPos, Vector2.up, 0.6f);
-                DisplayAlmostPanel2(hitObj);
+                StartCoroutine(DisplayAlmostPanel(hitObj));
                 break;
 
             case "right":
                 hitObj = Physics2D.Raycast(nowPos, Vector2.right, 0.6f);
-                DisplayAlmostPanel2(hitObj);
+                StartCoroutine(DisplayAlmostPanel(hitObj));
                 break;
 
             case "left":
                 hitObj = Physics2D.Raycast(nowPos, Vector2.left, 0.6f);
-                DisplayAlmostPanel2(hitObj);
+                StartCoroutine(DisplayAlmostPanel(hitObj));
                 break;
         }
     }
 
 
     // Almostパネルを表示するかのチェック（1マス先が宝箱だったら、2秒間表示する）
-    void DisplayAlmostPanel2(RaycastHit2D _hitInfo)
+    IEnumerator DisplayAlmostPanel(RaycastHit2D _hitInfo)
     {
         if (_hitInfo.collider == null)
         {
-            return;
+            yield break;
         }
-        if (_hitInfo.transform.tag == "JuweryBox")
+        else if (_hitInfo.transform.tag == "JuweryBox")
         {
             isAlmostCollision = true;
             almostPanel.SetActive(true);
-
-            // これだと、並列処理されてしまい意味がない//////////////////////////////////////////////////////////////////////////////////////////////////////
-            // StartCoroutine(Sleep());
-
-            // almostPanel.SetActive(false);
+            yield return new WaitForSeconds(2.0f);
+            almostPanel.SetActive(false);
         }
     }
 
