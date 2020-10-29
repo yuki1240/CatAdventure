@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour
     public GameObject clearPanel;
     public GameObject almostPanel;
 
-    // ①これをPlayerManagerから取得しようとして、エラーになった
     public StageCreater StageCreater;
 
     private PlayerManager playerSclipt;

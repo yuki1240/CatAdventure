@@ -60,19 +60,13 @@ public class PlayerManager : MonoBehaviour
     {
         rb = transform.GetComponent<Rigidbody2D>();
         StageCreater = GameObject.FindWithTag("Wall").GetComponent<StageCreater>();
-
-        ///////////////////////////////////////////////////////////////////////////////////////////// 以下がエラーになる理由
-
-        // ①これをGameManagerのStageCreaterから取得しようとして、エラーになった。
-        // GameManagerではpublicで、かつStageCreaterはDestoryされていないのになぜ？？
-
-        // これはOK
         playerImage = StageCreater.PlayerObj.GetComponent<SpriteRenderer>();
     }
 
     void PlayerWalk(Vector3 _currentPos, float _rayDistance, float _characterMoveUnit)
     {
         audioSource.PlayOneShot(actionSE);
+
         switch (currentDirection)
         {
             case "front":
@@ -110,59 +104,40 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    void PlayerTrun(string _commandDirection)
+    void test_PlayerWalk(float _rayDistance, float _characterMoveUnit)
     {
         audioSource.PlayOneShot(actionSE);
 
-        //switch (_currentDirection)
-        //{
-        //    case "front":
-        //        if (_commandDirection == "TrunRight")
-        //        {
-        //            playerImage.sprite = rightImage;
-        //        }
-        //        else
-        //        {
-        //            playerImage.sprite = Image;
-        //        }
-        //        break;
+        Vector3 currentPos = transform.position;
+        Vector3 direction = Vector3.zero;
 
-        //    case "back":
-        //        if (_commandDirection == "TrunRight")
-        //        {
-        //            playerImage.sprite = leftImage;
-        //        }
-        //        else
-        //        {
-        //            playerImage.sprite = rightImage;
-        //        }
-        //        break;
+        switch (currentDirection)
+        {
+            case "front":
+                direction = Vector3.up;
+                break;
+            case "back":
+                direction = Vector3.down;
+                break;
+            case "right":
+                direction = Vector3.right;
+                break;
+            case "left":
+                direction = Vector3.left;
+                break;
+        }
 
-        //    case "right":
-        //        if (_commandDirection == "TrunRight")
-        //        {
-        //            playerImage.sprite = backImage;
-        //        }
-        //        else
-        //        {
-        //            playerImage.sprite = frontImage;
-        //        }
-        //        break;
+        RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, _rayDistance);
 
-        //    case "left":
-        //        if (_commandDirection == "TrunRight")
-        //        {
-        //            playerImage.sprite = frontImage;
-        //        }
-        //        else
-        //        {
-        //            playerImage.sprite = backImage;
-        //        }
-        //        break;
-        //}
+        if (!ObjCollisionCheck(hitInfo))
+        {
+            rb.MovePosition(currentPos + direction * _characterMoveUnit);
+        }
+    }
 
-        ///////////////////////////////////////////////////////////// 上と下どっちが見やすい？
-
+    void PlayerTrun(string _commandDirection)
+    {
+        audioSource.PlayOneShot(actionSE);
         if (_commandDirection == "TrunRight")
         {
             switch (currentDirection)
@@ -217,7 +192,6 @@ public class PlayerManager : MonoBehaviour
             case "front":
                 RaycastHit2D hitInfo = Physics2D.Raycast(_currentPos, Vector2.up, 0.6f);
                 DestoryCheck(hitInfo);
-                // ↑の処理を呼んだあとに0.5秒だけ遅らせたい /////////////////////////////////////////////////////////////////////////////
                 break;
 
             case "back":
@@ -256,7 +230,8 @@ public class PlayerManager : MonoBehaviour
             {
                 float rayDistance = RayDistance * 1;
                 float characterMoveUnit = CharacterMoveUnit * 1;
-                PlayerWalk(currentPos, rayDistance, characterMoveUnit);
+                // PlayerWalk(currentPos, rayDistance, characterMoveUnit);
+                test_PlayerWalk(rayDistance, characterMoveUnit);
             }
 
             // 2歩前に進む
@@ -264,7 +239,8 @@ public class PlayerManager : MonoBehaviour
             {
                 float rayDistance = RayDistance * 2;
                 float characterMoveUnit = CharacterMoveUnit * 2;
-                PlayerWalk(currentPos, rayDistance, characterMoveUnit);
+                // PlayerWalk(currentPos, rayDistance, characterMoveUnit);
+                test_PlayerWalk(rayDistance, characterMoveUnit);
             }
 
             // 右回転
@@ -325,12 +301,11 @@ public class PlayerManager : MonoBehaviour
         }
         else if (_hitInfo.transform.tag == "Enemy")
         {
-            // この処理を呼んだあとに0.5秒だけ遅らせたい /////////////////////////////////////////////////////////////////////////////
             StartCoroutine(DestoryEnemy(_hitInfo));
         }
     }
 
-    // 敵だったとき、0.5秒後に削除
+    // 敵だったとき、1秒後に削除
     IEnumerator DestoryEnemy(RaycastHit2D _hitInfo)
     {
         yield return new WaitForSeconds(1.0f);
@@ -407,7 +382,7 @@ public class PlayerManager : MonoBehaviour
         // あと一歩で宝箱かどうか？
         // Yes =>「おしい表示」
         // No => 何もしない
-        if (JuweryBoxCheck(_currentDirection))
+        if (JuweryBoxCheck())
         {
             isAlmostCollision = true;
             StartCoroutine(DisplayAlmostPanel());
@@ -423,13 +398,13 @@ public class PlayerManager : MonoBehaviour
     }
 
     // 一歩先が宝箱かどうかを返す関数
-    bool JuweryBoxCheck(string _currentDirection)
+    bool JuweryBoxCheck()
     {
         Vector3 nowPos = transform.position;
         Vector2 direction = Vector2.zero;
         float distance = 0.6f;
 
-        switch (_currentDirection)
+        switch (currentDirection)
         {
             case "front":
                 direction = Vector2.up;
