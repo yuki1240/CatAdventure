@@ -127,8 +127,7 @@ MonoBehaviour:
     type: 3}
   leftImage: {fileID: -4709456396536258026, guid: b0111d74c81c933449fb9bdc9f431f2d,
     type: 3}
-  audioSource: {fileID: -7967006024086673514}
-  mistakeSE: {fileID: 8300000, guid: ad4d0f0c9f52fe6428ccd22c1bd335ec, type: 3}
+  mistakeSE: {fileID: 8300000, guid: 868f6f889afcc9148912d9ba69c6dc1f, type: 3}
   enemyDeathSE: {fileID: 8300000, guid: 09e8cdad4e937094ebf770b14c7f937b, type: 3}
   actionSE: {fileID: 8300000, guid: 0fc211f309634234190742c637953cfe, type: 3}
   clearSE: {fileID: 8300000, guid: bb3be1e0fbd637d40baf8ef44fda9b4c, type: 3}

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,32 +18,20 @@ public class PlayerManager : MonoBehaviour
     public Sprite rightImage;
     public Sprite leftImage;
 
-    // 音源
-    public AudioSource audioSource;
-    public AudioClip mistakeSE;
-    public AudioClip enemyDeathSE;
-    public AudioClip actionSE;
-    public AudioClip clearSE;
-    public AudioClip AttackSE;
-
     // 宝箱まであと1マスだったら、true
     public bool isAlmostCollision = false;
 
-    // trueのとき、ゲームを中断（範囲外や敵に衝突したとき）
-    public bool gameStopFlag = false;
-
-
-    // GameManagerから渡される各パターンのパネル
-    GameObject reTryPanel;
-    GameObject clearPanel;
-    GameObject almostPanel;
+    bool attackFlag = false;
 
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
 
 
+    // StageCreaterへの参照
     StageCreater StageCreater;
 
+    // GamaManagerへの参照
+    GameManager gameManager;
 
     // プレイヤーの方向
     string currentDirection = "front";
@@ -58,56 +47,131 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        rb = transform.GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         StageCreater = GameObject.FindWithTag("Wall").GetComponent<StageCreater>();
         playerImage = StageCreater.PlayerObj.GetComponent<SpriteRenderer>();
+        gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
     }
 
-    void PlayerWalk(Vector3 _currentPos, float _rayDistance, float _characterMoveUnit)
+    // コマンド情報をGameManagerから受り、PlayerMove()へ渡して動かす
+    public void ReceaveCmd(List<string> _cmdList, GameObject _retryObj, GameObject _clearObj, GameObject _almostObj)
     {
-        audioSource.PlayOneShot(actionSE);
+        cmdList = _cmdList;
+
+        // 受け取ったコマンド情報を元に猫を動かす
+        StartCoroutine(PlayerMove());
+    }
+
+    // 宝箱までたどり着いたとき
+    private void OnTriggerEnter2D(Collider2D _collider)
+    {
+        if (_collider.transform.tag == "JuweryBox")
+        {
+            print("Clear");
+            gameManager.gameStopFlag = true;
+            gameManager.clearPanel.SetActive(true);
+            gameManager.CallSound("clearSE");
+        }
+    }
+
+    IEnumerator PlayerMove()
+    {
+        for (int i = 0; i < cmdList.Count; i++)
+        {
+            attackFlag = false;
+
+            // 攻撃コマンド
+            if (cmdList[i] == "Attack")
+            {
+                print("attack");
+                print("attackFlag : " + attackFlag);
+                // StartCoroutine(PlayerAttack());
+                PlayerAttack();
+                print("attack_end");
+                print("attackFlag : " + attackFlag);
+            }
+
+            // 1歩前に進む
+            else if (cmdList[i] == "Walk1")
+            {
+                gameManager.CallSound("actionSE");
+                float rayDistance = RayDistance * 1;
+                float characterMoveUnit = CharacterMoveUnit * 1;
+                PlayerWalk(rayDistance, characterMoveUnit);
+            }
+
+            // 2歩前に進む
+            else if (cmdList[i] == "Walk2")
+            {
+                print("GetCurrentDirection : " + currentDirection);
+                print("walk2");
+                print("attackFlag : " + attackFlag);
+                gameManager.CallSound("actionSE");
+                float rayDistance = RayDistance * 2;
+                float characterMoveUnit = CharacterMoveUnit * 2;
+                PlayerWalk(rayDistance, characterMoveUnit);
+            }
+
+            // 右回転
+            else if (cmdList[i] == "TrunRight")
+            {
+                gameManager.CallSound("actionSE");
+                PlayerTrun(cmdList[i]);
+            }
+
+            // 左回転
+            else if (cmdList[i] == "TrunLeft")
+            {
+                gameManager.CallSound("actionSE");
+                PlayerTrun(cmdList[i]);
+            }
+
+            // 最後のコマンドを実行時
+            if (i == cmdList.Count - 1 || gameManager.gameStopFlag)
+            {
+                print("end1");
+                StartCoroutine(gameManager.ShowReTryPanel(attackFlag));
+                yield break;
+            }
+
+            yield return new WaitForSeconds(1.0f);
+        }
+    }
+
+    void PlayerAttack()
+    {
+        gameManager.CallSound("attackSE");
+
+        Vector3 currentPos = transform.position;
+        Vector3 direction = Vector3.zero;
 
         switch (currentDirection)
         {
             case "front":
-                RaycastHit2D hitInfo = Physics2D.Raycast(_currentPos, Vector2.up, _rayDistance);
-
-                if (!ObjCollisionCheck(hitInfo))
-                {
-                    rb.MovePosition(_currentPos + Vector3.up * _characterMoveUnit);
-                }
+                direction = Vector3.up;
                 break;
-
             case "back":
-                hitInfo = Physics2D.Raycast(_currentPos, Vector2.down, _rayDistance);
-                if (!ObjCollisionCheck(hitInfo))
-                {
-                    rb.MovePosition(_currentPos + Vector3.down * _characterMoveUnit);
-                }
+                direction = Vector3.down;
                 break;
-
             case "right":
-                hitInfo = Physics2D.Raycast(_currentPos, Vector2.right, _rayDistance);
-                if (!ObjCollisionCheck(hitInfo))
-                {
-                    rb.MovePosition(_currentPos + Vector3.right * _characterMoveUnit);
-                }
+                direction = Vector3.right;
                 break;
-
             case "left":
-                hitInfo = Physics2D.Raycast(_currentPos, Vector2.left, _rayDistance);
-                if (!ObjCollisionCheck(hitInfo))
-                {
-                    rb.MovePosition(_currentPos + Vector3.left * _characterMoveUnit);
-                }
+                direction = Vector3.left;
                 break;
+        }
+
+        RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, RayDistance);
+
+        if (gameManager.CollisionCheck(hitInfo, "attack"))
+        {
+            attackFlag = true;
+            StartCoroutine(gameManager.DestoryEnemy(hitInfo));
         }
     }
 
-    void test_PlayerWalk(float _rayDistance, float _characterMoveUnit)
+    void PlayerWalk(float _rayDistance, float _characterMoveUnit)
     {
-        audioSource.PlayOneShot(actionSE);
-
         Vector3 currentPos = transform.position;
         Vector3 direction = Vector3.zero;
 
@@ -129,7 +193,7 @@ public class PlayerManager : MonoBehaviour
 
         RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, _rayDistance);
 
-        if (!ObjCollisionCheck(hitInfo))
+        if (!gameManager.CollisionCheck(hitInfo, "Walk"))
         {
             rb.MovePosition(currentPos + direction * _characterMoveUnit);
         }
@@ -137,7 +201,6 @@ public class PlayerManager : MonoBehaviour
 
     void PlayerTrun(string _commandDirection)
     {
-        audioSource.PlayOneShot(actionSE);
         if (_commandDirection == "TrunRight")
         {
             switch (currentDirection)
@@ -180,138 +243,8 @@ public class PlayerManager : MonoBehaviour
                     break;
             }
         }
-
         currentDirection = GetCurrentDirection();
-    }
-
-    void PlayerAttack(Vector3 _currentPos)
-    {
-        audioSource.PlayOneShot(AttackSE);
-        switch (currentDirection)
-        {
-            case "front":
-                RaycastHit2D hitInfo = Physics2D.Raycast(_currentPos, Vector2.up, 0.6f);
-                DestoryCheck(hitInfo);
-                break;
-
-            case "back":
-                hitInfo = Physics2D.Raycast(_currentPos, Vector2.down, 0.6f);
-                DestoryCheck(hitInfo);
-                break;
-
-            case "right":
-                hitInfo = Physics2D.Raycast(_currentPos, Vector2.right, 0.6f);
-                DestoryCheck(hitInfo);
-                break;
-
-            case "left":
-                hitInfo = Physics2D.Raycast(_currentPos, Vector2.left, 0.6f);
-                DestoryCheck(hitInfo);
-                break;
-
-        }
-    }
-
-    IEnumerator PlayerMove()
-    {
-        for (int i = 0; i < cmdList.Count; i++)
-        {
-            // 今の位置
-            Vector3 currentPos = transform.position;
-
-            // 攻撃コマンド
-            if (cmdList[i] == "Attack")
-            {
-                PlayerAttack(currentPos);
-            }
-
-            // 1歩前に進む
-            else if (cmdList[i] == "Walk1")
-            {
-                float rayDistance = RayDistance * 1;
-                float characterMoveUnit = CharacterMoveUnit * 1;
-                // PlayerWalk(currentPos, rayDistance, characterMoveUnit);
-                test_PlayerWalk(rayDistance, characterMoveUnit);
-            }
-
-            // 2歩前に進む
-            else if (cmdList[i] == "Walk2")
-            {
-                float rayDistance = RayDistance * 2;
-                float characterMoveUnit = CharacterMoveUnit * 2;
-                // PlayerWalk(currentPos, rayDistance, characterMoveUnit);
-                test_PlayerWalk(rayDistance, characterMoveUnit);
-            }
-
-            // 右回転
-            else if (cmdList[i] == "TrunRight")
-            {
-                PlayerTrun(cmdList[i]);
-            }
-
-            // 左回転
-            else if (cmdList[i] == "TrunLeft")
-            {
-                PlayerTrun(cmdList[i]);
-            }
-
-            yield return new WaitForSeconds(1.0f);
-
-            // 最後のコマンドを実行時
-            if (i == cmdList.Count - 1)
-            {
-                DisplayCheck(currentDirection);
-                gameStopFlag = true;
-            }
-
-            // ゲームオーバーフラグが立っていたらループを抜ける
-            if (gameStopFlag || isAlmostCollision)
-            {
-                reTryPanel.SetActive(true);
-                audioSource.PlayOneShot(mistakeSE);
-                yield break;
-            }
-        }
-    }
-
-    // 進もうとしているマスに、オブジェクトがあるかどうかをチェック
-    bool ObjCollisionCheck(RaycastHit2D _hitInfo)
-    {
-        if (_hitInfo.collider == null)
-        {
-            return false;
-        }
-        else if (_hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall" || _hitInfo.transform.tag == "Enemy")
-        {
-            return true;
-        }
-        else
-        {
-            print(_hitInfo.transform.tag);
-            return false;
-        }
-    }
-
-    // 敵の削除
-    void DestoryCheck(RaycastHit2D _hitInfo)
-    {
-        if (_hitInfo.collider == null)
-        {
-            return;
-        }
-        else if (_hitInfo.transform.tag == "Enemy")
-        {
-            StartCoroutine(DestoryEnemy(_hitInfo));
-        }
-    }
-
-    // 敵だったとき、1秒後に削除
-    IEnumerator DestoryEnemy(RaycastHit2D _hitInfo)
-    {
-        yield return new WaitForSeconds(1.0f);
-        _hitInfo.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
-        audioSource.PlayOneShot(enemyDeathSE);
-        Destroy(_hitInfo.transform.gameObject, 1.0f);
+        print("GetCurrentDirection : " + currentDirection);
     }
 
     // 今の猫の向きを取得
@@ -341,37 +274,16 @@ public class PlayerManager : MonoBehaviour
         return "";
     }
 
-    // コマンド情報をGameManagerから受り、PlayerMove()へ渡して動かす
-    public void ReceaveCmd(List<string> _cmdList, GameObject _retryObj, GameObject _clearObj, GameObject _almostObj)
-    {
-        reTryPanel = _retryObj;
-        clearPanel = _clearObj;
-        almostPanel = _almostObj;
-
-        cmdList = _cmdList;
-
-        // 受け取ったコマンド情報を元に猫を動かす
-        StartCoroutine(PlayerMove());
-    }
-
-    // 宝箱までたどり着いたとき
-    private void OnTriggerEnter2D(Collider2D _collider)
-    {
-        if (_collider.transform.tag == "JuweryBox")
-        {
-            clearPanel.SetActive(true);
-            audioSource.PlayOneShot(clearSE);
-        }
-    }
+    
 
     // 壁にぶつかったとき（範囲外のとき）
     private void OnCollisionEnter2D(Collision2D _collision)
     {
         if (_collision.transform.tag == "Wall")
         {
-            gameStopFlag = true;
-            reTryPanel.SetActive(true);
-            audioSource.PlayOneShot(mistakeSE);
+            gameManager.gameStopFlag = true;
+            gameManager.CallSound("mistakeSE");
+            StartCoroutine(gameManager.ShowReTryPanel(attackFlag));
         }
     }
 
@@ -392,9 +304,9 @@ public class PlayerManager : MonoBehaviour
     // Almostパネルを表示するかのチェック（1マス先が宝箱だったら、2秒間表示する）
     IEnumerator DisplayAlmostPanel()
     {
-        almostPanel.SetActive(true);
+        // almostPanel.SetActive(true);
         yield return new WaitForSeconds(2.0f);
-        almostPanel.SetActive(false);
+        // almostPanel.SetActive(false);
     }
 
     // 一歩先が宝箱かどうかを返す関数
@@ -417,13 +329,13 @@ public class PlayerManager : MonoBehaviour
                 break;
         }
 
-        RaycastHit2D hitObj = Physics2D.Raycast(nowPos, direction, distance);
+        RaycastHit2D hitInfo = Physics2D.Raycast(nowPos, direction, distance);
 
-        if (hitObj.collider == null)
+        if (hitInfo.collider == null)
         {
             return false;
         }
 
-        return hitObj.transform.tag == "JuweryBox";
+        return hitInfo.transform.tag == "JuweryBox";
     }
 }

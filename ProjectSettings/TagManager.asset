@@ -7,8 +7,8 @@ TagManager:
   - Enemy
   - Block
   - JuweryBox
-  - Box
   - Wall
+  - GameManager
   layers:
   - Default
   - TransparentFX

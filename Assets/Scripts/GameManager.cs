@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,6 +13,20 @@ public class GameManager : MonoBehaviour
     public GameObject reTryPanel;
     public GameObject clearPanel;
     public GameObject almostPanel;
+
+    GameObject enemyPrefab;
+    Animation enemyDeathAnime;
+
+    public bool gameStopFlag = false;
+    public bool gameClearFlag = false;
+
+    // 音源
+    AudioSource audioSource;
+    public AudioClip mistakeSE;
+    public AudioClip clearSE;
+    public AudioClip enemyDeathSE;
+    public AudioClip attackSE;
+    public AudioClip actionSE;
 
     public StageCreater StageCreater;
 
@@ -26,7 +41,14 @@ public class GameManager : MonoBehaviour
 
     public int CommandNumber = 20;
 
-    public void RunButtonClick()
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        enemyPrefab = GameObject.FindWithTag("Enemy").GetComponent<GameObject>();
+        // enemyDeathAnime = enemyPrefab.GetComponent<Animation>();
+    }
+
+    public void OnClickRunButton()
     {
         playerSclipt = StageCreater.PlayerObj.GetComponent<PlayerManager>();
 
@@ -61,17 +83,92 @@ public class GameManager : MonoBehaviour
         playerSclipt.ReceaveCmd(cmdList, reTryPanel, clearPanel, almostPanel);
     }
 
-    public void ReTry()
+    // 進もうとしているマスに、オブジェクトがあるかどうかをチェック
+    public bool CollisionCheck(RaycastHit2D _hitInfo, string _command)
+    {
+        if (_hitInfo.collider == null)
+        {
+            return false;
+        }
+
+        if (_command == "attack")
+        {
+            return _hitInfo.transform.tag == "Enemy";
+        }
+
+        return _hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall" || _hitInfo.transform.tag == "Enemy";
+    }
+
+    public void CallSound(String _soundName)
+    {
+        switch (_soundName)
+        {
+            case "mistakeSE":
+                audioSource.PlayOneShot(mistakeSE);
+                break;
+            case "attackSE":
+                audioSource.PlayOneShot(attackSE);
+                break;
+            case "enemyDeathSE":
+                audioSource.PlayOneShot(enemyDeathSE);
+                break;
+            case "actionSE":
+                audioSource.PlayOneShot(actionSE);
+                break;
+            case "clearSE":
+                audioSource.PlayOneShot(clearSE);
+                break;
+        }
+        
+    }
+
+    public IEnumerator DestoryEnemy(RaycastHit2D _hitInfo)
+    {
+        yield return new WaitForSeconds(0.5f);
+        audioSource.PlayOneShot(enemyDeathSE);
+        _hitInfo.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
+        Destroy(_hitInfo.transform.gameObject, 1.0f);
+    }
+
+    // flag = trueのとき、最後のコマンドで敵を倒したとき
+    public IEnumerator ShowReTryPanel(bool _attackFlag)
+    {
+        if (_attackFlag)
+        {
+            print("wait 1.5f");
+            yield return new WaitForSeconds(1.5f);
+            reTryPanel.SetActive(true);
+            audioSource.PlayOneShot(mistakeSE);
+        } 
+        else
+        {
+            print("wait 1.0f");
+            yield return new WaitForSeconds(1.0f);
+            reTryPanel.SetActive(true);
+            audioSource.PlayOneShot(mistakeSE);
+        }
+    }
+
+    public void ShowClearPanel()
+    {
+        clearPanel.SetActive(true);
+    }
+
+    public void OnClickReTryButton()
     {
         reTryPanel.SetActive(false);
-     
+        
         // 初期化処理
         StageCreater.CreateMapObjects();
     }
 
-    public void ReLoad()
+    public void OnClickRefleshButton()
     {
         SceneManager.LoadScene("Main");
     }
 
+    public void OnClickClearButton()
+    {
+        SceneManager.LoadScene("Main");
+    }
 }
