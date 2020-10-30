@@ -67,7 +67,6 @@ public class PlayerManager : MonoBehaviour
     {
         if (_collider.transform.tag == "JuweryBox")
         {
-            print("Clear");
             gameManager.gameStopFlag = true;
             gameManager.clearPanel.SetActive(true);
             gameManager.CallSound("clearSE");
@@ -83,12 +82,7 @@ public class PlayerManager : MonoBehaviour
             // 攻撃コマンド
             if (cmdList[i] == "Attack")
             {
-                print("attack");
-                print("attackFlag : " + attackFlag);
-                // StartCoroutine(PlayerAttack());
                 PlayerAttack();
-                print("attack_end");
-                print("attackFlag : " + attackFlag);
             }
 
             // 1歩前に進む
@@ -103,9 +97,6 @@ public class PlayerManager : MonoBehaviour
             // 2歩前に進む
             else if (cmdList[i] == "Walk2")
             {
-                print("GetCurrentDirection : " + currentDirection);
-                print("walk2");
-                print("attackFlag : " + attackFlag);
                 gameManager.CallSound("actionSE");
                 float rayDistance = RayDistance * 2;
                 float characterMoveUnit = CharacterMoveUnit * 2;
@@ -129,7 +120,6 @@ public class PlayerManager : MonoBehaviour
             // 最後のコマンドを実行時
             if (i == cmdList.Count - 1 || gameManager.gameStopFlag)
             {
-                print("end1");
                 StartCoroutine(gameManager.ShowReTryPanel(attackFlag));
                 yield break;
             }
@@ -192,7 +182,6 @@ public class PlayerManager : MonoBehaviour
         }
 
         RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, _rayDistance);
-
         if (!gameManager.CollisionCheck(hitInfo, "Walk"))
         {
             rb.MovePosition(currentPos + direction * _characterMoveUnit);
@@ -244,7 +233,6 @@ public class PlayerManager : MonoBehaviour
             }
         }
         currentDirection = GetCurrentDirection();
-        print("GetCurrentDirection : " + currentDirection);
     }
 
     // 今の猫の向きを取得
@@ -291,9 +279,6 @@ public class PlayerManager : MonoBehaviour
     // Almostパネルを表示するかのチェック（各方向の確認）
     void DisplayCheck(string _currentDirection)
     {
-        // あと一歩で宝箱かどうか？
-        // Yes =>「おしい表示」
-        // No => 何もしない
         if (JuweryBoxCheck())
         {
             isAlmostCollision = true;

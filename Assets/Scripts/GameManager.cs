@@ -91,6 +91,8 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
+        print(_hitInfo.transform.tag);
+
         if (_command == "attack")
         {
             return _hitInfo.transform.tag == "Enemy";
@@ -124,10 +126,10 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator DestoryEnemy(RaycastHit2D _hitInfo)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
         audioSource.PlayOneShot(enemyDeathSE);
         _hitInfo.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
-        Destroy(_hitInfo.transform.gameObject, 1.0f);
+        Destroy(_hitInfo.transform.gameObject, 0.4f);
     }
 
     // flag = trueのとき、最後のコマンドで敵を倒したとき
@@ -135,14 +137,12 @@ public class GameManager : MonoBehaviour
     {
         if (_attackFlag)
         {
-            print("wait 1.5f");
             yield return new WaitForSeconds(1.5f);
             reTryPanel.SetActive(true);
             audioSource.PlayOneShot(mistakeSE);
         } 
         else
         {
-            print("wait 1.0f");
             yield return new WaitForSeconds(1.0f);
             reTryPanel.SetActive(true);
             audioSource.PlayOneShot(mistakeSE);

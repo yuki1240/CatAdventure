@@ -4577,8 +4577,13 @@ MonoBehaviour:
   reTryPanel: {fileID: 28094841}
   clearPanel: {fileID: 1824526459}
   almostPanel: {fileID: 1966176570}
-  audioSource: {fileID: 0}
-  mistakeSE: {fileID: 0}
+  gameStopFlag: 0
+  gameClearFlag: 0
+  mistakeSE: {fileID: 8300000, guid: 868f6f889afcc9148912d9ba69c6dc1f, type: 3}
+  clearSE: {fileID: 8300000, guid: bb3be1e0fbd637d40baf8ef44fda9b4c, type: 3}
+  enemyDeathSE: {fileID: 8300000, guid: 09e8cdad4e937094ebf770b14c7f937b, type: 3}
+  attackSE: {fileID: 8300000, guid: 2e1543264d1940f458608e75c0d2b315, type: 3}
+  actionSE: {fileID: 8300000, guid: 0fc211f309634234190742c637953cfe, type: 3}
   StageCreater: {fileID: 1254890289}
   CommandNumber: 20
 --- !u!4 &734801422
@@ -4602,14 +4607,14 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 734801420}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 0e130d8c9d0d9d046929a938895c1f11, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 801c8496257d12549be986e8ed7fb139, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -5017,7 +5022,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 734801421}
-        m_MethodName: ReTry
+        m_MethodName: OnClickReTryButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13809,7 +13814,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 734801421}
-        m_MethodName: ReLoad
+        m_MethodName: OnClickClearButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
