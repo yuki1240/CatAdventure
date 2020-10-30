@@ -18,14 +18,11 @@ public class PlayerManager : MonoBehaviour
     public Sprite rightImage;
     public Sprite leftImage;
 
-    // 宝箱まであと1マスだったら、true
-    public bool isAlmostCollision = false;
-
+    // 今のコマンドが攻撃ならtrue
     bool attackFlag = false;
 
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
-
 
     // StageCreaterへの参照
     StageCreater StageCreater;
@@ -36,11 +33,9 @@ public class PlayerManager : MonoBehaviour
     // プレイヤーの方向
     string currentDirection = "front";
 
-
     // 今の状態のプレイヤー画像
     SpriteRenderer playerImage;
 
-    
     private Rigidbody2D rb = null;
     private readonly float RayDistance = 0.6f;
     private readonly float CharacterMoveUnit = 0.63f;
@@ -77,17 +72,15 @@ public class PlayerManager : MonoBehaviour
             // 1歩前に進む
             else if (cmdList[i] == "Walk1")
             {
-                float rayDistance = RayDistance * 1;
-                float characterMoveUnit = CharacterMoveUnit * 1;
-                PlayerWalk(rayDistance, characterMoveUnit);
+                PlayerWalk(RayDistance, CharacterMoveUnit);
             }
 
             // 2歩前に進む
             else if (cmdList[i] == "Walk2")
             {
-                float rayDistance = RayDistance * 2;
-                float characterMoveUnit = CharacterMoveUnit * 2;
-                PlayerWalk(rayDistance, characterMoveUnit);
+                PlayerWalk(RayDistance, CharacterMoveUnit);
+                yield return new WaitForSeconds(0.5f);
+                PlayerWalk(RayDistance, CharacterMoveUnit);
             }
 
             // 右回転
@@ -102,8 +95,20 @@ public class PlayerManager : MonoBehaviour
                 PlayerTrun(cmdList[i]);
             }
 
-            // 最後のコマンドを実行時かつStopフラグがfalseのとき
-            if (i == cmdList.Count - 1 && gameManager.gameStopFlag)
+            // 他の処理が終わるのを待つ
+            yield return new WaitForSeconds(0.1f);
+
+            // 宝箱まであと1マスのとき
+            // gameManager.ShowDisplayCheck(currentDirection);
+
+            // ゲームクリアにならなかったとき
+            if (gameManager.gameStopFlag)
+            {
+                yield break;
+            }
+
+            // 最後のコマンドのとき
+            if (i == cmdList.Count -1 && !gameManager.gameStopFlag)
             {
                 StartCoroutine(gameManager.ShowReTryPanel(attackFlag));
                 yield break;
@@ -115,7 +120,7 @@ public class PlayerManager : MonoBehaviour
 
     void PlayerAttack()
     {
-        gameManager.CallSound("actionSE");
+        gameManager.CallSound("attackSE");
         Vector3 currentPos = transform.position;
         Vector3 direction = Vector3.zero;
 
@@ -168,6 +173,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, _rayDistance);
+
         if (!gameManager.CollisionCheck(hitInfo, "Walk"))
         {
             rb.MovePosition(currentPos + direction * _characterMoveUnit);
@@ -176,6 +182,7 @@ public class PlayerManager : MonoBehaviour
 
     void PlayerTrun(string _commandDirection)
     {
+        gameManager.gameStopFlag = false;
         gameManager.CallSound("actionSE");
 
         if (_commandDirection == "TrunRight")
@@ -257,14 +264,14 @@ public class PlayerManager : MonoBehaviour
         {
             gameManager.gameStopFlag = true;
             gameManager.CallSound("clearSE");
-            gameManager.clearPanel.SetActive(true);
-            
+            StartCoroutine(gameManager.ShowClearPanel());
         }
     }
 
     // 壁にぶつかったとき（範囲外のとき）
     private void OnCollisionEnter2D(Collision2D _collision)
     {
+        print("呼ばれた");
         if (_collision.transform.tag == "Wall")
         {
             gameManager.gameStopFlag = true;
@@ -273,52 +280,35 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    //// 一歩先が宝箱かどうかを返す関数
+    //public bool JuweryBoxCheck()
+    //{
+    //    print("currentDirection : " + currentDirection);
+    //    Vector3 currentPos = transform.position;
+    //    Vector2 direction = Vector2.zero;
+    //    float distance = 0.6f;
 
-    // Almostパネルを表示するかのチェック（各方向の確認）
-    void DisplayCheck(string _currentDirection)
-    {
-        if (JuweryBoxCheck())
-        {
-            isAlmostCollision = true;
-            StartCoroutine(DisplayAlmostPanel());
-        }
-    }
+    //    switch (currentDirection)
+    //    {
+    //        case "front":
+    //            direction = Vector2.up;
+    //            break;
+    //        case "right":
+    //            direction = Vector2.right;
+    //            break;
+    //        case "left":
+    //            direction = Vector2.left;
+    //            break;
+    //    }
 
-    // Almostパネルを表示するかのチェック（1マス先が宝箱だったら、2秒間表示する）
-    IEnumerator DisplayAlmostPanel()
-    {
-        // almostPanel.SetActive(true);
-        yield return new WaitForSeconds(2.0f);
-        // almostPanel.SetActive(false);
-    }
+    //    RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, distance);
 
-    // 一歩先が宝箱かどうかを返す関数
-    bool JuweryBoxCheck()
-    {
-        Vector3 nowPos = transform.position;
-        Vector2 direction = Vector2.zero;
-        float distance = 0.6f;
-
-        switch (currentDirection)
-        {
-            case "front":
-                direction = Vector2.up;
-                break;
-            case "right":
-                direction = Vector2.right;
-                break;
-            case "left":
-                direction = Vector2.left;
-                break;
-        }
-
-        RaycastHit2D hitInfo = Physics2D.Raycast(nowPos, direction, distance);
-
-        if (hitInfo.collider == null)
-        {
-            return false;
-        }
-
-        return hitInfo.transform.tag == "JuweryBox";
-    }
+    //    if (hitInfo.collider == null)
+    //    {
+    //        print("null");
+    //        return false;
+    //    }
+    //    print(hitInfo.transform.tag);
+    //    return hitInfo.transform.tag == "JuweryBox";
+    //}
 }

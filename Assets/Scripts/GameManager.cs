@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
     public AudioClip attackSE;
     public AudioClip actionSE;
 
+    // 宝箱まであと1マスだったら、true
+    public bool isAlmostCollision = false;
+
     public StageCreater StageCreater;
 
     private PlayerManager playerSclipt;
@@ -91,14 +94,12 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        print(_hitInfo.transform.tag + " , " + _command);
-
         if (_command == "attack")
         {
             return _hitInfo.transform.tag == "Enemy";
         }
 
-        return _hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall" || _hitInfo.transform.tag == "Enemy";
+        return _hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall" || _hitInfo.transform.tag == "Enemy" || _hitInfo.transform.tag == "Player";
     }
 
     public void CallSound(String _soundName)
@@ -149,8 +150,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ShowClearPanel()
+    //// Almostパネルを表示するかのチェック（各方向の確認）
+    //public void ShowDisplayCheck(string _currentDirection)
+    //{
+    //    print("playerSclipt.JuweryBoxCheck() : " + playerSclipt.JuweryBoxCheck());
+    //    if (playerSclipt.JuweryBoxCheck())
+    //    {
+    //        gameStopFlag = true;
+    //        StartCoroutine(DisplayAlmostPanel());
+    //    }
+    //}
+
+    //// Almostパネルを表示するかのチェック（1マス先が宝箱だったら、2秒間表示する）
+    //IEnumerator DisplayAlmostPanel()
+    //{
+    //    yield return new WaitForSeconds(1.0f);
+    //    almostPanel.SetActive(true);
+    //    yield return new WaitForSeconds(2.0f);
+    //    almostPanel.SetActive(false);
+    //    // StageCreater.CreateMapObjects();
+    //}
+
+    
+    public IEnumerator ShowClearPanel()
     {
+        yield return new WaitForSeconds(1.0f);
         clearPanel.SetActive(true);
     }
 

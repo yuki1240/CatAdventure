@@ -4584,6 +4584,7 @@ MonoBehaviour:
   enemyDeathSE: {fileID: 8300000, guid: 09e8cdad4e937094ebf770b14c7f937b, type: 3}
   attackSE: {fileID: 8300000, guid: 2e1543264d1940f458608e75c0d2b315, type: 3}
   actionSE: {fileID: 8300000, guid: 0fc211f309634234190742c637953cfe, type: 3}
+  isAlmostCollision: 0
   StageCreater: {fileID: 1254890289}
   CommandNumber: 20
 --- !u!4 &734801422
@@ -4610,7 +4611,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 801c8496257d12549be986e8ed7fb139, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
