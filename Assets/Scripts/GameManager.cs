@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        print(_hitInfo.transform.tag);
+        print(_hitInfo.transform.tag + " , " + _command);
 
         if (_command == "attack")
         {

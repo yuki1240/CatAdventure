@@ -62,17 +62,6 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(PlayerMove());
     }
 
-    // 宝箱までたどり着いたとき
-    private void OnTriggerEnter2D(Collider2D _collider)
-    {
-        if (_collider.transform.tag == "JuweryBox")
-        {
-            gameManager.gameStopFlag = true;
-            gameManager.clearPanel.SetActive(true);
-            gameManager.CallSound("clearSE");
-        }
-    }
-
     IEnumerator PlayerMove()
     {
         for (int i = 0; i < cmdList.Count; i++)
@@ -88,7 +77,6 @@ public class PlayerManager : MonoBehaviour
             // 1歩前に進む
             else if (cmdList[i] == "Walk1")
             {
-                gameManager.CallSound("actionSE");
                 float rayDistance = RayDistance * 1;
                 float characterMoveUnit = CharacterMoveUnit * 1;
                 PlayerWalk(rayDistance, characterMoveUnit);
@@ -97,7 +85,6 @@ public class PlayerManager : MonoBehaviour
             // 2歩前に進む
             else if (cmdList[i] == "Walk2")
             {
-                gameManager.CallSound("actionSE");
                 float rayDistance = RayDistance * 2;
                 float characterMoveUnit = CharacterMoveUnit * 2;
                 PlayerWalk(rayDistance, characterMoveUnit);
@@ -106,19 +93,17 @@ public class PlayerManager : MonoBehaviour
             // 右回転
             else if (cmdList[i] == "TrunRight")
             {
-                gameManager.CallSound("actionSE");
                 PlayerTrun(cmdList[i]);
             }
 
             // 左回転
             else if (cmdList[i] == "TrunLeft")
             {
-                gameManager.CallSound("actionSE");
                 PlayerTrun(cmdList[i]);
             }
 
-            // 最後のコマンドを実行時
-            if (i == cmdList.Count - 1 || gameManager.gameStopFlag)
+            // 最後のコマンドを実行時かつStopフラグがfalseのとき
+            if (i == cmdList.Count - 1 && gameManager.gameStopFlag)
             {
                 StartCoroutine(gameManager.ShowReTryPanel(attackFlag));
                 yield break;
@@ -130,8 +115,7 @@ public class PlayerManager : MonoBehaviour
 
     void PlayerAttack()
     {
-        gameManager.CallSound("attackSE");
-
+        gameManager.CallSound("actionSE");
         Vector3 currentPos = transform.position;
         Vector3 direction = Vector3.zero;
 
@@ -162,6 +146,8 @@ public class PlayerManager : MonoBehaviour
 
     void PlayerWalk(float _rayDistance, float _characterMoveUnit)
     {
+        gameManager.CallSound("actionSE");
+
         Vector3 currentPos = transform.position;
         Vector3 direction = Vector3.zero;
 
@@ -190,6 +176,8 @@ public class PlayerManager : MonoBehaviour
 
     void PlayerTrun(string _commandDirection)
     {
+        gameManager.CallSound("actionSE");
+
         if (_commandDirection == "TrunRight")
         {
             switch (currentDirection)
@@ -262,7 +250,17 @@ public class PlayerManager : MonoBehaviour
         return "";
     }
 
-    
+    // 宝箱までたどり着いたとき
+    private void OnTriggerEnter2D(Collider2D _collider)
+    {
+        if (_collider.transform.tag == "JuweryBox")
+        {
+            gameManager.gameStopFlag = true;
+            gameManager.CallSound("clearSE");
+            gameManager.clearPanel.SetActive(true);
+            
+        }
+    }
 
     // 壁にぶつかったとき（範囲外のとき）
     private void OnCollisionEnter2D(Collision2D _collision)
