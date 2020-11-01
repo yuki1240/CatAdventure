@@ -48,8 +48,8 @@ public class PlayerManager : MonoBehaviour
         gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
     }
 
-    // コマンド情報をGameManagerから受り、PlayerMove()へ渡して動かす
-    public void ReceaveCmd(List<string> _cmdList, GameObject _retryObj, GameObject _clearObj, GameObject _almostObj)
+    // コマンド情報をGameManagerから受け取り、PlayerMove()へ渡して動かす
+    public void ReceaveCmd(List<string> _cmdList)
     {
         cmdList = _cmdList;
 
@@ -104,6 +104,8 @@ public class PlayerManager : MonoBehaviour
             // ゲームクリアにならなかったとき
             if (gameManager.gameStopFlag)
             {
+                // 実行ボタンを再表示
+                gameManager.runButton.interactable = true;
                 yield break;
             }
 

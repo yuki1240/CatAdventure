@@ -8,17 +8,35 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject Content;
-    public GameObject runButton;
-    public GameObject reTryPanel;
-    public GameObject clearPanel;
-    public GameObject almostPanel;
+    public StageCreater StageCreater;
+    private PlayerManager playerSclipt;
 
+    public GameObject ContentObj;
+    public GameObject reTryPanelObj;
+    public GameObject clearPanelObj;
+    public GameObject almostPanelObj;
+    public GameObject runButtonObj;
+    public Button runButton;
     GameObject enemyPrefab;
     Animation enemyDeathAnime;
 
+    // セットされたコマンド画像を入れておく配列
+    Image[] dropImageChild = new Image[20];
+
+    // コマンドの情報を保持する配列
+    // [System.NonSerialized]
+    
+
+    public int CommandNumber = 20;
+
+    [System.NonSerialized]
     public bool gameStopFlag = false;
+    [System.NonSerialized]
     public bool gameClearFlag = false;
+
+    // 宝箱まであと1マスだったら、true
+    [System.NonSerialized]
+    public bool isAlmostCollision = false;
 
     // 音源
     AudioSource audioSource;
@@ -28,31 +46,19 @@ public class GameManager : MonoBehaviour
     public AudioClip attackSE;
     public AudioClip actionSE;
 
-    // 宝箱まであと1マスだったら、true
-    public bool isAlmostCollision = false;
-
-    public StageCreater StageCreater;
-
-    private PlayerManager playerSclipt;
-
-    // セットされたコマンド画像を入れておく配列
-    Image[] dropImageChild = new Image[20];
-
-    // コマンドの情報を保持する配列
-    [System.NonSerialized]
-    public List<string> cmdList = new List<string>();
-
-    public int CommandNumber = 20;
+    
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
         enemyPrefab = GameObject.FindWithTag("Enemy").GetComponent<GameObject>();
-        // enemyDeathAnime = enemyPrefab.GetComponent<Animation>();
+        runButton = runButtonObj.GetComponent<Button>();
     }
 
     public void OnClickRunButton()
     {
+        List<string> cmdList = new List<string>();
+
         playerSclipt = StageCreater.PlayerObj.GetComponent<PlayerManager>();
 
         // コマンドリストの初期化
@@ -68,7 +74,7 @@ public class GameManager : MonoBehaviour
 
             try
             {
-                dropImage = Content.transform.Find(frameImageName).GetChild(0).gameObject.GetComponent<Image>();
+                dropImage = ContentObj.transform.Find(frameImageName).GetChild(0).gameObject.GetComponent<Image>();
             }
             catch
             {
@@ -82,8 +88,15 @@ public class GameManager : MonoBehaviour
             }
 
         }
+
+        if (cmdList.Count != 0)
+        {
+            // 実行ボタンを終わるまでグレーアウト
+            runButton.interactable = false;
+        }
+
         // 一連のコマンド情報を猫に渡す
-        playerSclipt.ReceaveCmd(cmdList, reTryPanel, clearPanel, almostPanel);
+        playerSclipt.ReceaveCmd(cmdList);
     }
 
     // 進もうとしているマスに、オブジェクトがあるかどうかをチェック
@@ -98,7 +111,6 @@ public class GameManager : MonoBehaviour
         {
             return _hitInfo.transform.tag == "Enemy";
         }
-
         return _hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall" || _hitInfo.transform.tag == "Enemy" || _hitInfo.transform.tag == "Player";
     }
 
@@ -122,7 +134,6 @@ public class GameManager : MonoBehaviour
                 audioSource.PlayOneShot(clearSE);
                 break;
         }
-        
     }
 
     public IEnumerator DestoryEnemy(RaycastHit2D _hitInfo)
@@ -139,13 +150,13 @@ public class GameManager : MonoBehaviour
         if (_attackFlag)
         {
             yield return new WaitForSeconds(1.5f);
-            reTryPanel.SetActive(true);
+            reTryPanelObj.SetActive(true);
             audioSource.PlayOneShot(mistakeSE);
         } 
         else
         {
             yield return new WaitForSeconds(1.0f);
-            reTryPanel.SetActive(true);
+            reTryPanelObj.SetActive(true);
             audioSource.PlayOneShot(mistakeSE);
         }
     }
@@ -174,14 +185,17 @@ public class GameManager : MonoBehaviour
     
     public IEnumerator ShowClearPanel()
     {
-        yield return new WaitForSeconds(1.0f);
-        clearPanel.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        clearPanelObj.SetActive(true);
     }
 
     public void OnClickReTryButton()
     {
-        reTryPanel.SetActive(false);
-        
+        reTryPanelObj.SetActive(false);
+
+        // 実行ボタンを再表示
+        runButton.interactable = true;
+
         // 初期化処理
         StageCreater.CreateMapObjects();
     }
