@@ -9,9 +9,6 @@ using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
-    // 猫の移動速度
-    public float speed = 1.0f;
-
     // 各方向の猫画像
     public Sprite frontImage;
     public Sprite backImage;
