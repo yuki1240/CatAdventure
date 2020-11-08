@@ -101,8 +101,7 @@ public class PlayerManager : MonoBehaviour
             // ゲームクリアにならなかったとき
             if (gameManager.gameStopFlag)
             {
-                // 実行ボタンを再表示
-                gameManager.runButton.interactable = true;
+                
                 yield break;
             }
 

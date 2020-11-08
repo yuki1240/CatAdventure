@@ -15,22 +15,25 @@ public class GameManager : MonoBehaviour
     public GameObject reTryPanelObj;
     public GameObject clearPanelObj;
     public GameObject almostPanelObj;
-    public GameObject runButtonObj;
+    public GameObject enemyPrefab;
+    public Text clearedStageNumber;
     public Button runButton;
-    GameObject enemyPrefab;
+    public Button refreshButton;
+    public Image scrollView;
+
     Animation enemyDeathAnime;
+    int clearedStageNum = 0;
 
     // セットされたコマンド画像を入れておく配列
     Image[] dropImageChild = new Image[20];
 
     // コマンドの情報を保持する配列
-    // [System.NonSerialized]
-    
-
+    [System.NonSerialized]
     public int CommandNumber = 20;
 
     [System.NonSerialized]
     public bool gameStopFlag = false;
+
     [System.NonSerialized]
     public bool gameClearFlag = false;
 
@@ -46,13 +49,12 @@ public class GameManager : MonoBehaviour
     public AudioClip attackSE;
     public AudioClip actionSE;
 
-    
-
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
         enemyPrefab = GameObject.FindWithTag("Enemy").GetComponent<GameObject>();
-        runButton = runButtonObj.GetComponent<Button>();
+        clearedStageNumber.text = "クリア済みステージ：" + StringWidthConverter.ConvertToFullWidth(PlayerPrefs.GetInt("clearedStageNumber").ToString());
+        
     }
 
     public void OnClickRunButton()
@@ -63,7 +65,7 @@ public class GameManager : MonoBehaviour
 
         // コマンドリストの初期化
         cmdList.Clear();
-
+        
         Image dropImage;
 
         // Framesの子のFremeImage1～Nまでを取得
@@ -93,6 +95,7 @@ public class GameManager : MonoBehaviour
         {
             // 実行ボタンを終わるまでグレーアウト
             runButton.interactable = false;
+            refreshButton.interactable = false;
         }
 
         // 一連のコマンド情報を猫に渡す
@@ -187,16 +190,15 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         clearPanelObj.SetActive(true);
+        PlayerPrefs.SetInt("clearedStageNumber", PlayerPrefs.GetInt("clearedStageNumber") + 1);
+        PlayerPrefs.Save();
     }
 
     public void OnClickReTryButton()
     {
         reTryPanelObj.SetActive(false);
-
-        // 実行ボタンを再表示
         runButton.interactable = true;
-
-        // 初期化処理
+        refreshButton.interactable = true;
         StageCreater.CreateMapObjects();
     }
 
@@ -208,5 +210,37 @@ public class GameManager : MonoBehaviour
     public void OnClickClearButton()
     {
         SceneManager.LoadScene("Main");
+    }
+
+
+
+    // 半角 ←→ 全角変換
+    public class StringWidthConverter : MonoBehaviour
+    {
+        const int ConvertionConstant = 65248;
+
+        static public string ConvertToFullWidth(string halfWidthStr)
+        {
+            string fullWidthStr = null;
+
+            for (int i = 0; i < halfWidthStr.Length; i++)
+            {
+                fullWidthStr += (char)(halfWidthStr[i] + ConvertionConstant);
+            }
+
+            return fullWidthStr;
+        }
+
+        static public string ConvertToHalfWidth(string fullWidthStr)
+        {
+            string halfWidthStr = null;
+
+            for (int i = 0; i < fullWidthStr.Length; i++)
+            {
+                halfWidthStr += (char)(fullWidthStr[i] - ConvertionConstant);
+            }
+
+            return halfWidthStr;
+        }
     }
 }
