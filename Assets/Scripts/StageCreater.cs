@@ -57,7 +57,7 @@ public class StageCreater : MonoBehaviour
         int blockCount = UnityEngine.Random.Range(1, 4);
         for (int y = 1; y < mapHeight - 1; y++) 
         {
-            int[] rand = Enumerable.Range(0, mapWidth - 1).OrderBy(n => Guid.NewGuid()).Take(blockCount).ToArray();
+            int[] rand = Enumerable.Range(0, mapWidth).OrderBy(n => Guid.NewGuid()).Take(blockCount).ToArray();
             for (int i = 0; i < rand.Length; i++)
             {
                 cells[y, rand[i]] = CellType.Block;
