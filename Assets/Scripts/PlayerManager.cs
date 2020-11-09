@@ -95,20 +95,26 @@ public class PlayerManager : MonoBehaviour
             // 他の処理が終わるのを待つ
             yield return new WaitForSeconds(0.1f);
 
-            // 宝箱まであと1マスのとき
-            // gameManager.ShowDisplayCheck(currentDirection);
-
+            
             // ゲームクリアにならなかったとき
             if (gameManager.gameStopFlag)
             {
-                
                 yield break;
             }
 
             // 最後のコマンドのとき
             if (i == cmdList.Count -1 && !gameManager.gameStopFlag)
             {
+                print(gameManager.JuweryBoxCheck(transform.position, currentDirection));
+                // 宝箱まであと1マスのとき
+                if (gameManager.JuweryBoxCheck(transform.position, currentDirection))
+                {
+                    StartCoroutine(gameManager.ShowAlmostPanel());
+                    yield return new WaitForSeconds(1.0f);
+                }
+
                 StartCoroutine(gameManager.ShowReTryPanel(attackFlag));
+
                 yield break;
             }
 
@@ -269,7 +275,7 @@ public class PlayerManager : MonoBehaviour
     // 壁にぶつかったとき（範囲外のとき）
     private void OnCollisionEnter2D(Collision2D _collision)
     {
-        print("呼ばれた");
+
         if (_collision.transform.tag == "Wall")
         {
             gameManager.gameStopFlag = true;
@@ -278,35 +284,5 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    //// 一歩先が宝箱かどうかを返す関数
-    //public bool JuweryBoxCheck()
-    //{
-    //    print("currentDirection : " + currentDirection);
-    //    Vector3 currentPos = transform.position;
-    //    Vector2 direction = Vector2.zero;
-    //    float distance = 0.6f;
-
-    //    switch (currentDirection)
-    //    {
-    //        case "front":
-    //            direction = Vector2.up;
-    //            break;
-    //        case "right":
-    //            direction = Vector2.right;
-    //            break;
-    //        case "left":
-    //            direction = Vector2.left;
-    //            break;
-    //    }
-
-    //    RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, distance);
-
-    //    if (hitInfo.collider == null)
-    //    {
-    //        print("null");
-    //        return false;
-    //    }
-    //    print(hitInfo.transform.tag);
-    //    return hitInfo.transform.tag == "JuweryBox";
-    //}
+    
 }

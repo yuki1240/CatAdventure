@@ -117,6 +117,34 @@ public class GameManager : MonoBehaviour
         return _hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall" || _hitInfo.transform.tag == "Enemy" || _hitInfo.transform.tag == "Player";
     }
 
+    // 一歩先が宝箱かどうかを返す関数
+    public bool JuweryBoxCheck(Vector3 _currentPos, string _currentDirection)
+    {
+        Vector2 direction = Vector2.zero;
+        float distance = 1.0f;
+
+        switch (_currentDirection)
+        {
+            case "front":
+                direction = Vector3.up;
+                break;
+            case "right":
+                direction = Vector3.right;
+                break;
+            case "left":
+                direction = Vector3.left;
+                break;
+        }
+
+        RaycastHit2D hitInfo = Physics2D.Raycast(_currentPos, direction, distance);
+
+        if (hitInfo.collider == null)
+        {
+            return false;
+        }
+        return hitInfo.transform.tag == "JuweryBox";
+    }
+
     public void CallSound(String _soundName)
     {
         switch (_soundName)
@@ -147,7 +175,7 @@ public class GameManager : MonoBehaviour
         Destroy(_hitInfo.transform.gameObject, 0.4f);
     }
 
-    // flag = trueのとき、最後のコマンドで敵を倒したとき
+    // _attackFlag = trueのとき、最後のコマンドで敵を倒したとき
     public IEnumerator ShowReTryPanel(bool _attackFlag)
     {
         if (_attackFlag)
@@ -164,28 +192,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //// Almostパネルを表示するかのチェック（各方向の確認）
-    //public void ShowDisplayCheck(string _currentDirection)
-    //{
-    //    print("playerSclipt.JuweryBoxCheck() : " + playerSclipt.JuweryBoxCheck());
-    //    if (playerSclipt.JuweryBoxCheck())
-    //    {
-    //        gameStopFlag = true;
-    //        StartCoroutine(DisplayAlmostPanel());
-    //    }
-    //}
+    public IEnumerator ShowAlmostPanel()
+    {
+        yield return new WaitForSeconds(0.5f);
+        almostPanelObj.SetActive(true);
+        yield return new WaitForSeconds(1.5f);
+        almostPanelObj.SetActive(false);
+    }
 
-    //// Almostパネルを表示するかのチェック（1マス先が宝箱だったら、2秒間表示する）
-    //IEnumerator DisplayAlmostPanel()
-    //{
-    //    yield return new WaitForSeconds(1.0f);
-    //    almostPanel.SetActive(true);
-    //    yield return new WaitForSeconds(2.0f);
-    //    almostPanel.SetActive(false);
-    //    // StageCreater.CreateMapObjects();
-    //}
-
-    
     public IEnumerator ShowClearPanel()
     {
         yield return new WaitForSeconds(0.5f);
