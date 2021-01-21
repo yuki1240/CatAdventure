@@ -21,8 +21,8 @@ public class Loading : MonoBehaviour
 		//　ロード画面UIをアクティブにする
 		loadUI.SetActive(true);
 
-		//　コルーチンを開始
-		StartCoroutine("LoadData");
+		//　コルーチン開始
+		StartCoroutine(LoadData());
 	}
 
 	IEnumerator LoadData()
