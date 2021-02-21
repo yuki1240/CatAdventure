@@ -53,8 +53,7 @@ public class GameManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         enemyPrefab = GameObject.FindWithTag("Enemy").GetComponent<GameObject>();
-        clearedStageNumber.text = "クリア済みステージ：" + StringWidthConverter.ConvertToFullWidth(PlayerPrefs.GetInt("clearedStageNumber").ToString());
-        
+        clearedStageNumber.text = "クリア済みステージ：" + PlayerPrefs.GetInt("clearedStageNumber".ToString());
     }
 
     public void OnClickRunButton()
@@ -65,7 +64,7 @@ public class GameManager : MonoBehaviour
 
         // コマンドリストの初期化
         cmdList.Clear();
-        
+
         Image dropImage;
 
         // Framesの子のFremeImage1～Nまでを取得
@@ -100,6 +99,53 @@ public class GameManager : MonoBehaviour
 
         // 一連のコマンド情報を猫に渡す
         playerSclipt.ReceaveCmd(cmdList);
+    }
+
+    public bool NewCollisionCheck(string _command)
+    {
+        int[] playerPos = new int[2];
+
+        for (int y = 0; y < StageCreater.mapHeight; y++)
+        {
+            for (int x = 0; x < StageCreater.mapWidth; x++)
+            {
+                if (StageCreater.cells[y, x] == StageCreater.CellType.Player)
+                {
+                    playerPos[0] = x;
+                    playerPos[1] = y;
+                }
+            }
+        }
+
+        switch (_command)
+        {
+            case "front":
+                print("front");
+                if (StageCreater.cells[playerPos[1] - 1, playerPos[0]] != StageCreater.CellType.JuweryBox)
+                {
+                    return true;
+                }
+                break;
+            case "back":
+                if (StageCreater.cells[playerPos[1] + 1, playerPos[0]] != StageCreater.CellType.JuweryBox)
+                {
+                    return true;
+                }
+                break;
+            case "right":
+                if (StageCreater.cells[playerPos[1], playerPos[0] + 1] != StageCreater.CellType.JuweryBox)
+                {
+                    return true;
+                }
+                break;
+            case "left":
+                if (StageCreater.cells[playerPos[1], playerPos[0] - 1] != StageCreater.CellType.JuweryBox)
+                {
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 
     // 進もうとしているマスに、オブジェクトがあるかどうかをチェック
@@ -183,7 +229,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1.5f);
             reTryPanelObj.SetActive(true);
             audioSource.PlayOneShot(mistakeSE);
-        } 
+        }
         else
         {
             yield return new WaitForSeconds(1.0f);
@@ -213,6 +259,10 @@ public class GameManager : MonoBehaviour
         reTryPanelObj.SetActive(false);
         runButton.interactable = true;
         refreshButton.interactable = true;
+        // ここでよぶのね
+        // そう　そもそもStageCreator.やりなおし()
+        // みたいな関数をStageCreator側につくっておく
+        StageCreater.Retry();
         StageCreater.CreateMapObjects();
     }
 
@@ -224,37 +274,5 @@ public class GameManager : MonoBehaviour
     public void OnClickClearButton()
     {
         SceneManager.LoadScene("Main");
-    }
-
-
-
-    // 半角 ←→ 全角変換
-    public class StringWidthConverter : MonoBehaviour
-    {
-        const int ConvertionConstant = 65248;
-
-        static public string ConvertToFullWidth(string halfWidthStr)
-        {
-            string fullWidthStr = null;
-
-            for (int i = 0; i < halfWidthStr.Length; i++)
-            {
-                fullWidthStr += (char)(halfWidthStr[i] + ConvertionConstant);
-            }
-
-            return fullWidthStr;
-        }
-
-        static public string ConvertToHalfWidth(string fullWidthStr)
-        {
-            string halfWidthStr = null;
-
-            for (int i = 0; i < fullWidthStr.Length; i++)
-            {
-                halfWidthStr += (char)(fullWidthStr[i] - ConvertionConstant);
-            }
-
-            return halfWidthStr;
-        }
     }
 }

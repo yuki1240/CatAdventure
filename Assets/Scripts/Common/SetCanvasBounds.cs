@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SetCanvasBounds : MonoBehaviour
 {
-    private void Start()
+    private void Awake()
     {
         ApplySafeArea(Screen.safeArea);
     }

@@ -6,13 +6,13 @@ using System.Text;
 
 public class StageCreater : MonoBehaviour
 {
-    public enum CellType 
+    public enum CellType
     {
         Empty,
         Block,
         JuweryBox,
-        Enemy, 
-        Player 
+        Enemy,
+        Player
     }
 
     public GameObject block;
@@ -20,7 +20,7 @@ public class StageCreater : MonoBehaviour
     public GameObject juweryBox;
     public GameObject player;
     public GameObject grid;
-    public float cellSize = 0.63f;
+    public float cellSize = 128f;
 
     public Vector3 startPosition = new Vector3(-2.31f, 0.0f, 0.0f);
 
@@ -30,10 +30,18 @@ public class StageCreater : MonoBehaviour
     // 外部から参照できるが値は変更不可
     public GameObject PlayerObj { get; private set; }
 
-    CellType[,] cells = null;
+    public CellType[,] cells = null;
 
-    private void Awake()
+    // 初期のマップ情報
+    private CellType[,] initCells = null;
+
+    private void Start()
     {
+        // 初回だけってどうやって判定するの？
+        // そもそもここでマップの情報作ってるから、ここでマップの情報を
+        // 生成したあとに、最後にコピーしたcells[]を保持しとけばいい
+
+        initCells = new CellType[mapHeight, mapWidth];
         cells = new CellType[mapHeight, mapWidth];
 
         // 空のセルで埋める
@@ -44,7 +52,7 @@ public class StageCreater : MonoBehaviour
                 cells[y, x] = CellType.Empty;
             }
         }
-        
+
         // 宝箱配置
         int randNum = UnityEngine.Random.Range(0, mapWidth);
         cells[mapHeight - 1, randNum] = CellType.JuweryBox;
@@ -55,7 +63,7 @@ public class StageCreater : MonoBehaviour
 
         // ブロックの配置
         int blockCount = UnityEngine.Random.Range(1, 4);
-        for (int y = 1; y < mapHeight - 1; y++) 
+        for (int y = 1; y < mapHeight - 1; y++)
         {
             int[] rand = Enumerable.Range(0, mapWidth).OrderBy(n => Guid.NewGuid()).Take(blockCount).ToArray();
             for (int i = 0; i < rand.Length; i++)
@@ -72,8 +80,42 @@ public class StageCreater : MonoBehaviour
             cells[y, randNum] = CellType.Enemy;
         }
 
+        // ここらへんで ok 
+        // まずコピーする用のcells[]をメンバ変数に作らないとだめ
+        // セルを保存するというよりは、cells（マップ）そのものをコピーする
+        // ぇ、じゃあこういう感じでやるってこと？
+        // こんなかんじ
+        // なるほどー！
+        // CreateMapObjのとこでもっかい
+        // これを呼び出すの？
+        // いや、あくまでCreateMapObjects()はマップ情報からオブジェクトを生成するだけだから
+        // CreateMapObjects()内ではやらない
+        // CreateMapObjects()を呼び出す前に、下の逆をやる
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                initCells[y, x] = cells[y, x];
+            }
+        }
 
-        // DebugMapCell();
+        DebugMapCell();
+
+        // そしたらここってこと？
+        // いや、やりなおし処理の前
+        CreateMapObjects();
+    }
+
+    public void Retry()
+    {
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                cells[y, x] = initCells[y, x];
+            }
+        }
+
         CreateMapObjects();
     }
 
@@ -82,30 +124,30 @@ public class StageCreater : MonoBehaviour
     {
         DestroyMapObjects();
 
-        for(int y = 0; y < mapHeight; y++)
+        for (int y = 0; y < mapHeight; y++)
         {
-            for(int x = 0; x < mapWidth; x++)
+            for (int x = 0; x < mapWidth; x++)
             {
                 CellType cellType = cells[y, x];
-                if(cellType == CellType.Block) 
+                if (cellType == CellType.Block)
                 {
                     var blockObj = Instantiate(block, transform);
-                    blockObj.transform.position = GetSpawnPosition(y, x);
+                    blockObj.transform.localPosition = GetSpawnPosition(y, x);
                 }
                 else if (cellType == CellType.Enemy)
                 {
                     var enemyObj = Instantiate(enemy, transform);
-                    enemyObj.transform.position = GetSpawnPosition(y, x);
+                    enemyObj.transform.localPosition = GetSpawnPosition(y, x);
                 }
                 else if (cellType == CellType.JuweryBox)
                 {
                     var juweryBoxObj = Instantiate(juweryBox, transform);
-                    juweryBoxObj.transform.position = GetSpawnPosition(y, x);
+                    juweryBoxObj.transform.localPosition = GetSpawnPosition(y, x);
                 }
                 if (cellType == CellType.Player)
                 {
                     PlayerObj = Instantiate(player, transform);
-                    PlayerObj.transform.position = GetSpawnPosition(y, x);
+                    PlayerObj.transform.localPosition = GetSpawnPosition(y, x);
                 }
             }
         }
@@ -119,7 +161,7 @@ public class StageCreater : MonoBehaviour
         }
     }
 
-    Vector3 GetSpawnPosition(int y, int x) 
+    Vector3 GetSpawnPosition(int y, int x)
     {
         Vector3 pos = startPosition;
         pos.x += x * cellSize;
@@ -127,7 +169,7 @@ public class StageCreater : MonoBehaviour
         return pos;
     }
 
-    void DebugMapCell() 
+    void DebugMapCell()
     {
         StringBuilder builder = new StringBuilder();
         for (int y = mapHeight - 1; y >= 0; y--)
