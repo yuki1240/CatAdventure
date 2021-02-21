@@ -13,7 +13,7 @@ public class CanvasScalerController : MonoBehaviour
     public float Width { get { return width; } }
     public float Height { get { return height; } }
 
-    private void Start()
+    private void Awake()
     {
         var scaler = GetComponent<CanvasScaler>();
 

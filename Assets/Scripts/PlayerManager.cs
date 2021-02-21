@@ -31,17 +31,18 @@ public class PlayerManager : MonoBehaviour
     string currentDirection = "front";
 
     // 今の状態のプレイヤー画像
-    SpriteRenderer playerImage;
+    Image playerImage;
 
-    private Rigidbody2D rb = null;
-    private readonly float RayDistance = 0.6f;
-    private readonly float CharacterMoveUnit = 0.63f;
+    // プレイヤーの位置情報
+    Vector3 playerPosition = Vector3.zero;
+
+    private readonly float CharacterMoveUnit = 121f;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        playerPosition = this.transform.localPosition;
         StageCreater = GameObject.FindWithTag("Wall").GetComponent<StageCreater>();
-        playerImage = StageCreater.PlayerObj.GetComponent<SpriteRenderer>();
+        playerImage = StageCreater.PlayerObj.GetComponent<Image>();
         gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
     }
 
@@ -69,15 +70,15 @@ public class PlayerManager : MonoBehaviour
             // 1歩前に進む
             else if (cmdList[i] == "Walk1")
             {
-                PlayerWalk(RayDistance, CharacterMoveUnit);
+                PlayerWalk();
             }
 
             // 2歩前に進む
             else if (cmdList[i] == "Walk2")
             {
-                PlayerWalk(RayDistance, CharacterMoveUnit);
+                PlayerWalk();
                 yield return new WaitForSeconds(0.5f);
-                PlayerWalk(RayDistance, CharacterMoveUnit);
+                PlayerWalk();
             }
 
             // 右回転
@@ -95,7 +96,7 @@ public class PlayerManager : MonoBehaviour
             // 他の処理が終わるのを待つ
             yield return new WaitForSeconds(0.1f);
 
-            
+
             // ゲームクリアにならなかったとき
             if (gameManager.gameStopFlag)
             {
@@ -103,9 +104,8 @@ public class PlayerManager : MonoBehaviour
             }
 
             // 最後のコマンドのとき
-            if (i == cmdList.Count -1 && !gameManager.gameStopFlag)
+            if (i == cmdList.Count - 1 && !gameManager.gameStopFlag)
             {
-                print(gameManager.JuweryBoxCheck(transform.position, currentDirection));
                 // 宝箱まであと1マスのとき
                 if (gameManager.JuweryBoxCheck(transform.position, currentDirection))
                 {
@@ -144,43 +144,37 @@ public class PlayerManager : MonoBehaviour
                 break;
         }
 
-        RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, RayDistance);
+        // RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, RayDistance);
 
-        if (gameManager.CollisionCheck(hitInfo, "attack"))
+        if (CollisionCheck("attack"))
         {
             attackFlag = true;
-            StartCoroutine(gameManager.DestoryEnemy(hitInfo));
+            // StartCoroutine(gameManager.DestoryEnemy(hitInfo));
         }
     }
 
-    void PlayerWalk(float _rayDistance, float _characterMoveUnit)
+    void PlayerWalk()
     {
         gameManager.CallSound("actionSE");
 
-        Vector3 currentPos = transform.position;
-        Vector3 direction = Vector3.zero;
-
-        switch (currentDirection)
+        if (!CollisionCheck("Walk"))
         {
-            case "front":
-                direction = Vector3.up;
-                break;
-            case "back":
-                direction = Vector3.down;
-                break;
-            case "right":
-                direction = Vector3.right;
-                break;
-            case "left":
-                direction = Vector3.left;
-                break;
-        }
-
-        RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, _rayDistance);
-
-        if (!gameManager.CollisionCheck(hitInfo, "Walk"))
-        {
-            rb.MovePosition(currentPos + direction * _characterMoveUnit);
+            if (GetCurrentDirection() == "front")
+            {
+                this.transform.localPosition += new Vector3(0f, CharacterMoveUnit, 0f);
+            }
+            else if (GetCurrentDirection() == "back")
+            {
+                this.transform.localPosition += new Vector3(0f, -CharacterMoveUnit, 0f);
+            }
+            else if (GetCurrentDirection() == "right")
+            {
+                this.transform.localPosition += new Vector3(CharacterMoveUnit, 0f, 0f);
+            }
+            else if (GetCurrentDirection() == "left")
+            {
+                this.transform.localPosition += new Vector3(-CharacterMoveUnit, 0f, 0f);
+            }
         }
     }
 
@@ -234,6 +228,57 @@ public class PlayerManager : MonoBehaviour
         currentDirection = GetCurrentDirection();
     }
 
+    // プレイヤーの前方に障害物がないかをチェック
+    public bool CollisionCheck(string _command)
+    {
+        int playerCellX = 0;
+        int playerCellY = 0;
+
+        // 今のプレイヤーの位置を探す
+        for (int y = 0; y < StageCreater.mapHeight; y++)
+        {
+            for (int x = 0; x < StageCreater.mapWidth; x++)
+            {
+                if (StageCreater.cells[y, x] == StageCreater.CellType.Player)
+                {
+                    playerCellX = x;
+                    playerCellY = y;
+                }
+            }
+        }
+
+        StageCreater.CellType cellType = StageCreater.CellType.Empty;
+
+        print(GetCurrentDirection());
+
+        // 探したプレイヤーの位置から、進もうとしているマスの情報を取得
+        switch (GetCurrentDirection())
+        {
+            case "front":
+                cellType = StageCreater.cells[playerCellY + 1, playerCellX];
+                break;
+            case "back":
+                cellType = StageCreater.cells[playerCellY - 1, playerCellX];
+                break;
+            case "right":
+                cellType = StageCreater.cells[playerCellY, playerCellX + 1];
+                break;
+            case "left":
+                cellType = StageCreater.cells[playerCellY, playerCellX - 1];
+                break;
+        }
+
+        print(cellType);
+
+        if (cellType != StageCreater.CellType.Empty)
+        {
+            print("true");
+            return true;
+        }
+        print("false");
+        return false;
+    }
+
     // 今の猫の向きを取得
     string GetCurrentDirection()
     {
@@ -284,5 +329,5 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    
+
 }
