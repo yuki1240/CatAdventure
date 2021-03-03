@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
     public GameObject reTryPanelObj;
     public GameObject clearPanelObj;
     public GameObject almostPanelObj;
-    public GameObject enemyPrefab;
     public Text clearedStageNumber;
     public Button runButton;
     public Button refreshButton;
@@ -41,18 +40,10 @@ public class GameManager : MonoBehaviour
     [System.NonSerialized]
     public bool isAlmostCollision = false;
 
-    // 音源
-    AudioSource audioSource;
-    public AudioClip mistakeSE;
-    public AudioClip clearSE;
-    public AudioClip enemyDeathSE;
-    public AudioClip attackSE;
-    public AudioClip actionSE;
-
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        enemyPrefab = GameObject.FindWithTag("Enemy").GetComponent<GameObject>();
+        Sound.LoadSe("enemyDeathSE", "EnemyDeathSE");
+        Sound.LoadSe("mistakeSE", "MistakeSE");
         clearedStageNumber.text = "クリア済みステージ：" + PlayerPrefs.GetInt("clearedStageNumber".ToString());
     }
 
@@ -97,145 +88,29 @@ public class GameManager : MonoBehaviour
             refreshButton.interactable = false;
         }
 
-        // 一連のコマンド情報を猫に渡す
+        // 一連のコマンド情報をプレイヤー（猫）に渡す
         playerSclipt.ReceaveCmd(cmdList);
     }
 
-    public bool NewCollisionCheck(string _command)
+    public IEnumerator DestoryEnemy(int enemyPosX, int enemyPosY)
     {
-        int[] playerPos = new int[2];
+        GameObject enemy = StageCreater.enemyList[enemyPosY, enemyPosX];
+        yield return new WaitForSeconds(0.3f);
+        Sound.PlaySe("enemyDeathSE");
+        yield return new WaitForSeconds(0.1f);
 
-        for (int y = 0; y < StageCreater.mapHeight; y++)
-        {
-            for (int x = 0; x < StageCreater.mapWidth; x++)
-            {
-                if (StageCreater.cells[y, x] == StageCreater.CellType.Player)
-                {
-                    playerPos[0] = x;
-                    playerPos[1] = y;
-                }
-            }
-        }
-
-        switch (_command)
-        {
-            case "front":
-                print("front");
-                if (StageCreater.cells[playerPos[1] - 1, playerPos[0]] != StageCreater.CellType.JuweryBox)
-                {
-                    return true;
-                }
-                break;
-            case "back":
-                if (StageCreater.cells[playerPos[1] + 1, playerPos[0]] != StageCreater.CellType.JuweryBox)
-                {
-                    return true;
-                }
-                break;
-            case "right":
-                if (StageCreater.cells[playerPos[1], playerPos[0] + 1] != StageCreater.CellType.JuweryBox)
-                {
-                    return true;
-                }
-                break;
-            case "left":
-                if (StageCreater.cells[playerPos[1], playerPos[0] - 1] != StageCreater.CellType.JuweryBox)
-                {
-                    return true;
-                }
-                break;
-        }
-        return false;
+        // 消失アニメーションの再生
+        enemy.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
+        Destroy(enemy.gameObject, 0.4f);
+        // マップ情報から敵を削除する
+        StageCreater.cells[enemyPosY, enemyPosX] = StageCreater.CellType.Empty;
     }
 
-    // 進もうとしているマスに、オブジェクトがあるかどうかをチェック
-    public bool CollisionCheck(RaycastHit2D _hitInfo, string _command)
+    public IEnumerator ShowReTryPanel()
     {
-        if (_hitInfo.collider == null)
-        {
-            return false;
-        }
-
-        if (_command == "attack")
-        {
-            return _hitInfo.transform.tag == "Enemy";
-        }
-        return _hitInfo.transform.tag == "Block" || _hitInfo.transform.tag == "Wall" || _hitInfo.transform.tag == "Enemy" || _hitInfo.transform.tag == "Player";
-    }
-
-    // 一歩先が宝箱かどうかを返す関数
-    public bool JuweryBoxCheck(Vector3 _currentPos, string _currentDirection)
-    {
-        Vector2 direction = Vector2.zero;
-        float distance = 1.0f;
-
-        switch (_currentDirection)
-        {
-            case "front":
-                direction = Vector3.up;
-                break;
-            case "right":
-                direction = Vector3.right;
-                break;
-            case "left":
-                direction = Vector3.left;
-                break;
-        }
-
-        RaycastHit2D hitInfo = Physics2D.Raycast(_currentPos, direction, distance);
-
-        if (hitInfo.collider == null)
-        {
-            return false;
-        }
-        return hitInfo.transform.tag == "JuweryBox";
-    }
-
-    public void CallSound(String _soundName)
-    {
-        switch (_soundName)
-        {
-            case "mistakeSE":
-                audioSource.PlayOneShot(mistakeSE);
-                break;
-            case "attackSE":
-                audioSource.PlayOneShot(attackSE);
-                break;
-            case "enemyDeathSE":
-                audioSource.PlayOneShot(enemyDeathSE);
-                break;
-            case "actionSE":
-                audioSource.PlayOneShot(actionSE);
-                break;
-            case "clearSE":
-                audioSource.PlayOneShot(clearSE);
-                break;
-        }
-    }
-
-    public IEnumerator DestoryEnemy(RaycastHit2D _hitInfo)
-    {
-        yield return new WaitForSeconds(0.4f);
-        audioSource.PlayOneShot(enemyDeathSE);
-        _hitInfo.transform.gameObject.GetComponent<Animator>().Play("EnemyRotate");
-        Destroy(_hitInfo.transform.gameObject, 0.4f);
-    }
-
-    // _attackFlag = trueのとき、最後のコマンドで敵を倒したとき
-    public IEnumerator ShowReTryPanel(bool _attackFlag)
-    {
-        if (_attackFlag)
-        {
-            yield return new WaitForSeconds(1.5f);
-            reTryPanelObj.SetActive(true);
-            audioSource.PlayOneShot(mistakeSE);
-        }
-        else
-        {
-            yield return new WaitForSeconds(1.0f);
-            reTryPanelObj.SetActive(true);
-            audioSource.PlayOneShot(mistakeSE);
-        }
+        yield return new WaitForSeconds(1.0f);
+        reTryPanelObj.SetActive(true);
+        Sound.PlaySe("mistakeSE");
     }
 
     public IEnumerator ShowAlmostPanel()
@@ -250,8 +125,10 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         clearPanelObj.SetActive(true);
-        PlayerPrefs.SetInt("clearedStageNumber", PlayerPrefs.GetInt("clearedStageNumber") + 1);
-        PlayerPrefs.Save();
+        // 今のクリア済みステージ数に＋1した値を保存する
+        localSave.saveData("clearedStageNumber", localSave.getIntData("clearedStageNumber") + 1);
+        // PlayerPrefs.SetInt("clearedStageNumber", PlayerPrefs.GetInt("clearedStageNumber") + 1);
+        // PlayerPrefs.Save();
     }
 
     public void OnClickReTryButton()
@@ -259,11 +136,7 @@ public class GameManager : MonoBehaviour
         reTryPanelObj.SetActive(false);
         runButton.interactable = true;
         refreshButton.interactable = true;
-        // ここでよぶのね
-        // そう　そもそもStageCreator.やりなおし()
-        // みたいな関数をStageCreator側につくっておく
         StageCreater.Retry();
-        StageCreater.CreateMapObjects();
     }
 
     public void OnClickRefleshButton()

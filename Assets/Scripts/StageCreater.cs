@@ -19,7 +19,7 @@ public class StageCreater : MonoBehaviour
     public GameObject enemy;
     public GameObject juweryBox;
     public GameObject player;
-    public GameObject grid;
+    GameObject grid;
     public float cellSize = 128f;
 
     public Vector3 startPosition = new Vector3(-2.31f, 0.0f, 0.0f);
@@ -35,13 +35,20 @@ public class StageCreater : MonoBehaviour
     // 初期のマップ情報
     private CellType[,] initCells = null;
 
+    public GameObject[,] enemyList = null;
+
+    // 更にいうとどうせ座標整数だから、Vector2Int型っていうのがある
+    // へー！知らんかった
+    // どんどん型をしぼって言ったほうがいいのね
+    // というより、扱うデータによって型を変える
+    // 二次元座標だったら基本Vector2,三次元座標だったら基本Vector3とか
+    //　了解！
+    public Vector2Int juweryBoxPos = new Vector2Int();
+
     private void Start()
     {
-        // 初回だけってどうやって判定するの？
-        // そもそもここでマップの情報作ってるから、ここでマップの情報を
-        // 生成したあとに、最後にコピーしたcells[]を保持しとけばいい
-
         initCells = new CellType[mapHeight, mapWidth];
+        enemyList = new GameObject[mapHeight, mapWidth];
         cells = new CellType[mapHeight, mapWidth];
 
         // 空のセルで埋める
@@ -80,17 +87,6 @@ public class StageCreater : MonoBehaviour
             cells[y, randNum] = CellType.Enemy;
         }
 
-        // ここらへんで ok 
-        // まずコピーする用のcells[]をメンバ変数に作らないとだめ
-        // セルを保存するというよりは、cells（マップ）そのものをコピーする
-        // ぇ、じゃあこういう感じでやるってこと？
-        // こんなかんじ
-        // なるほどー！
-        // CreateMapObjのとこでもっかい
-        // これを呼び出すの？
-        // いや、あくまでCreateMapObjects()はマップ情報からオブジェクトを生成するだけだから
-        // CreateMapObjects()内ではやらない
-        // CreateMapObjects()を呼び出す前に、下の逆をやる
         for (int y = 0; y < mapHeight; y++)
         {
             for (int x = 0; x < mapWidth; x++)
@@ -101,8 +97,6 @@ public class StageCreater : MonoBehaviour
 
         DebugMapCell();
 
-        // そしたらここってこと？
-        // いや、やりなおし処理の前
         CreateMapObjects();
     }
 
@@ -138,11 +132,25 @@ public class StageCreater : MonoBehaviour
                 {
                     var enemyObj = Instantiate(enemy, transform);
                     enemyObj.transform.localPosition = GetSpawnPosition(y, x);
+
+                    // 敵の出現先情報を保持
+                    enemyList[y, x] = enemyObj;
                 }
                 else if (cellType == CellType.JuweryBox)
                 {
                     var juweryBoxObj = Instantiate(juweryBox, transform);
                     juweryBoxObj.transform.localPosition = GetSpawnPosition(y, x);
+                    juweryBoxPos = new Vector2Int(x, y);    //　逆
+                    // ぇ、↑の同じにするんじゃないの？
+                    // 違う
+                    // ↑は二次元配列だから、[y,x]ってなってるけど、Vector2型は
+                    // Vector2(x,y)
+                    // いまだと、
+                    // juweryBoxPos.x = y, juweryBoxPos.y = x
+                    // になっちゃってる
+                    // コンストラクタを見てみ
+                    // Vector2Int(int x, int y);    こう書いてあるからx,yの順番にわたす
+                    // あね
                 }
                 if (cellType == CellType.Player)
                 {

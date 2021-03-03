@@ -123,7 +123,7 @@ public class Sound {
             return false;
         }
 
-        Debug.Log("BGM再生2");
+        // Debug.Log("BGM再生2");
         // いったん止める
         _StopBgm();
 
@@ -136,7 +136,7 @@ public class Sound {
         source.clip = _data.Clip;
         source.Play();
 
-        Debug.Log("BGM再生");
+        // Debug.Log("BGM再生");
         return true;
     }
 
@@ -146,7 +146,7 @@ public class Sound {
     }
     bool _StopBgm() {
         _GetAudioSource(eType.Bgm).Stop();
-        Debug.Log("BGM停止");
+        // Debug.Log("BGM停止");
         return true;
     }
 
@@ -169,7 +169,7 @@ public class Sound {
             var source = _GetAudioSource(eType.Se);
             source.PlayOneShot(_data.Clip);
         }
-        Debug.Log("SE再生");
+        // Debug.Log("SE再生");
         return true;
     }
 
