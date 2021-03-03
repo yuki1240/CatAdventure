@@ -15,11 +15,11 @@ public class PlayerManager : MonoBehaviour
     public Sprite rightImage;
     public Sprite leftImage;
 
-    // 今のコマンドが攻撃ならtrue
-    bool attackFlag = false;
-
     // 一連のコマンド情報が入ったリスト
     List<string> cmdList = new List<string>();
+
+    // ゲームクリアフラグ
+    bool clearFlag = false;
 
     // StageCreaterへの参照
     StageCreater StageCreater;
@@ -41,8 +41,15 @@ public class PlayerManager : MonoBehaviour
 
     private readonly float CharacterMoveUnit = 120f;
 
+    StageCreater.CellType cellType = StageCreater.CellType.Empty;
+
     void Start()
     {
+        Sound.LoadSe("attackSE", "attackSE");
+        Sound.LoadSe("actionSE", "actionSE");
+        Sound.LoadSe("clearSE", "clearSE");
+        Sound.LoadSe("mistakeSE", "mistakeSE");
+
         playerPosition = this.transform.localPosition;
         StageCreater = GameObject.FindWithTag("Wall").GetComponent<StageCreater>();
         playerImage = StageCreater.PlayerObj.GetComponent<Image>();
@@ -62,8 +69,6 @@ public class PlayerManager : MonoBehaviour
     {
         for (int i = 0; i < cmdList.Count; i++)
         {
-            attackFlag = false;
-
             // 攻撃コマンド
             if (cmdList[i] == "Attack")
             {
@@ -74,14 +79,41 @@ public class PlayerManager : MonoBehaviour
             else if (cmdList[i] == "Walk1")
             {
                 PlayerWalk();
+                if (GetJuweryBoxCheck() == true)
+                {
+                    ShowClearPanel();
+                    yield break;
+                }
             }
 
             // 2歩前に進む
             else if (cmdList[i] == "Walk2")
             {
                 PlayerWalk();
+                
                 yield return new WaitForSeconds(0.5f);
+
+                // ここでtrueだったら、下のPlayerWork()は飛ばしたいんだけど、
+                // IEnumeratorで普通にruturnできないからどうすればいい？
+                if (GetJuweryBoxCheck() == true)
+                {
+                    
+                    ShowClearPanel();
+                    // ここでこの関数を抜けたい
+                    yield break;    // これでCoroutineから抜けられるはず
+                    // ぁ、そうなんだ！
+                
+                }
+
                 PlayerWalk();
+                
+                if (GetJuweryBoxCheck() == true)
+                {
+                    ShowClearPanel();
+                    // ここでこの関数を抜けたい
+                    yield break;
+                }
+
             }
 
             // 右回転
@@ -99,25 +131,16 @@ public class PlayerManager : MonoBehaviour
             // 他の処理が終わるのを待つ
             yield return new WaitForSeconds(0.1f);
 
-
-            // ゲームクリアにならなかったとき
-            if (gameManager.gameStopFlag)
-            {
-                yield break;
-            }
-
             // 最後のコマンドのとき
-            if (i == cmdList.Count - 1 && !gameManager.gameStopFlag)
+            if (i == cmdList.Count - 1)
             {
                 // 宝箱まであと1マスのとき
-                if (gameManager.JuweryBoxCheck(transform.position, currentDirection))
+                if (GetFrontObject() == StageCreater.CellType.JuweryBox)
                 {
                     StartCoroutine(gameManager.ShowAlmostPanel());
                     yield return new WaitForSeconds(1.0f);
                 }
-
-                StartCoroutine(gameManager.ShowReTryPanel(attackFlag));
-
+                StartCoroutine(gameManager.ShowReTryPanel());
                 yield break;
             }
 
@@ -127,43 +150,47 @@ public class PlayerManager : MonoBehaviour
 
     void PlayerAttack()
     {
-        gameManager.CallSound("attackSE");
-        Vector3 currentPos = transform.position;
-        Vector3 direction = Vector3.zero;
+        Sound.PlaySe("attackSE");
 
-        switch (currentDirection)
+        // 目の前が敵だったとき
+        if (GetFrontObject() == StageCreater.CellType.Enemy)
         {
-            case "front":
-                direction = Vector3.up;
-                break;
-            case "back":
-                direction = Vector3.down;
-                break;
-            case "right":
-                direction = Vector3.right;
-                break;
-            case "left":
-                direction = Vector3.left;
-                break;
-        }
+            int enemyPosX = 0;
+            int enemyPosY = 0;
 
-        // RaycastHit2D hitInfo = Physics2D.Raycast(currentPos, direction, RayDistance);
+            switch (GetCurrentDirection())
+            {
+                case "front":
+                    enemyPosY = playerCellY + 1;
+                    enemyPosX= playerCellX;
+                    break;
+                case "back":
+                    enemyPosY = playerCellY - 1;
+                    enemyPosX = playerCellX;
+                    break;
+                case "right":
+                    enemyPosY = playerCellY;
+                    enemyPosX = playerCellX + 1;
+                    break;
+                case "left":
+                    enemyPosY = playerCellY;
+                    enemyPosX = playerCellX - 1;
+                    break;
+            }
 
-        if (CollisionCheck("attack"))
-        {
-            attackFlag = true;
-            // StartCoroutine(gameManager.DestoryEnemy(hitInfo));
+            // 敵オブジェの削除
+            StartCoroutine(gameManager.DestoryEnemy(enemyPosX, enemyPosY));
+
+            UpdateEnemyPosition();
         }
     }
 
     void PlayerWalk()
     {
-        gameManager.CallSound("actionSE");
+        Sound.PlaySe("actionSE");
 
-        if (!CollisionCheck("Walk"))
+        if (GetFrontObject() == StageCreater.CellType.Empty || GetFrontObject() == StageCreater.CellType.JuweryBox)
         {
-            UpdataPlayerPosition();
-
             if (GetCurrentDirection() == "front")
             {
                 this.transform.localPosition += new Vector3(0f, CharacterMoveUnit, 0f);
@@ -180,13 +207,16 @@ public class PlayerManager : MonoBehaviour
             {
                 this.transform.localPosition += new Vector3(-CharacterMoveUnit, 0f, 0f);
             }
+            UpdatePlayerPosition();
+            Debug.Log($"[Player位置] X:{playerCellX}, Y:{playerCellY}");
+            Debug.Log($"[宝箱位置] X:{StageCreater.juweryBoxPos.x}, Y:{StageCreater.juweryBoxPos.y}");
         }
     }
 
     void PlayerTrun(string _commandDirection)
     {
         gameManager.gameStopFlag = false;
-        gameManager.CallSound("actionSE");
+        Sound.PlaySe("actionSE");
 
         if (_commandDirection == "TrunRight")
         {
@@ -233,10 +263,9 @@ public class PlayerManager : MonoBehaviour
         currentDirection = GetCurrentDirection();
     }
 
-    // プレイヤーの前方に障害物がないかをチェック
-    public bool CollisionCheck(string _command)
+    // プレイヤーがいる位置のセル情報を取得
+    void GetPlayerPos()
     {
-        // 今のプレイヤーの位置を探す
         for (int y = 0; y < StageCreater.mapHeight; y++)
         {
             for (int x = 0; x < StageCreater.mapWidth; x++)
@@ -245,65 +274,119 @@ public class PlayerManager : MonoBehaviour
                 {
                     playerCellX = x;
                     playerCellY = y;
-                    Debug.Log($"[Player位置] X:{playerCellX}, Y:{playerCellY}");
+                    // Debug.Log($"[Player位置] X:{playerCellX}, Y:{playerCellY}");
                     break;
-                    
                 }
             }
         }
+    }
 
-        print("今の向き：" + GetCurrentDirection());
+    // 前方のセル情報の取得
+    StageCreater.CellType GetFrontObject()
+    {
+        GetPlayerPos();
 
-        StageCreater.CellType cellType = StageCreater.CellType.Empty;
+        int mapH = StageCreater.mapHeight;
+        int mapW = StageCreater.mapWidth;
 
-        // 探したプレイヤーの位置から、進もうとしているマスの情報を取得
         switch (GetCurrentDirection())
         {
             case "front":
+                if (playerCellY + 1 >= mapH)
+                {
+                    return StageCreater.CellType.Block;
+                }
                 cellType = StageCreater.cells[playerCellY + 1, playerCellX];
                 break;
             case "back":
+                if (playerCellY - 1 <= -1)
+                {
+                    return StageCreater.CellType.Block;
+                }
                 cellType = StageCreater.cells[playerCellY - 1, playerCellX];
                 break;
             case "right":
+                if (playerCellX + 1 >= mapW)
+                {
+                    return StageCreater.CellType.Block;
+                }
                 cellType = StageCreater.cells[playerCellY, playerCellX + 1];
                 break;
             case "left":
+                if (playerCellX - 1 <= -1)
+                {
+                    return StageCreater.CellType.Block;
+                }
                 cellType = StageCreater.cells[playerCellY, playerCellX - 1];
                 break;
         }
 
-        print("前方のマス：" + cellType);
-
-        if (cellType != StageCreater.CellType.Empty)
+        switch(cellType)
         {
-            print("前方になにかしらのオブジェクトあり");
+            case StageCreater.CellType.Empty:
+                return StageCreater.CellType.Empty;
+            case StageCreater.CellType.Enemy:
+                return StageCreater.CellType.Enemy;
+            case StageCreater.CellType.Block:
+                return StageCreater.CellType.Block;
+            case StageCreater.CellType.JuweryBox:
+                return StageCreater.CellType.JuweryBox;
+            case StageCreater.CellType.Player:
+                return StageCreater.CellType.Player;
+            default:
+                return StageCreater.CellType.Empty;
+        }
+    }
+
+    // プレイヤーの前方に障害物がないかをチェック
+    public bool CollisionCheck(string _command)
+    {
+        if (GetFrontObject() != StageCreater.CellType.Empty)
+        {
             return true;
         }    
-
-        print("前方になにもない");
         return false;
     }
 
-    void UpdataPlayerPosition()
+    // プレイヤー位置の更新
+    void UpdatePlayerPosition()
+    {
+        StageCreater.cells[playerCellY, playerCellX] = StageCreater.CellType.Empty;
+       
+        switch (GetCurrentDirection())
+        {
+            case "front":
+                playerCellY += 1;
+                break;
+            case "back":
+                playerCellY -= 1;
+                break;
+            case "right":
+                playerCellX += 1;
+                break;
+            case "left":
+                playerCellX -= 1;
+                break;
+        }
+
+        StageCreater.cells[playerCellY, playerCellX] = StageCreater.CellType.Player;
+    }
+
+    void UpdateEnemyPosition()
     {
         switch (GetCurrentDirection())
         {
             case "front":
-                StageCreater.cells[playerCellY, playerCellX] = StageCreater.CellType.Empty;
-                StageCreater.cells[playerCellY + 1, playerCellX] = StageCreater.CellType.Player;
+                StageCreater.cells[playerCellY + 1, playerCellX] = StageCreater.CellType.Empty;
                 break;
             case "back":
-                StageCreater.cells[playerCellY, playerCellX] = StageCreater.CellType.Empty;
-                StageCreater.cells[playerCellY - 1, playerCellX] = StageCreater.CellType.Player;
+                StageCreater.cells[playerCellY - 1, playerCellX] = StageCreater.CellType.Empty;
                 break;
             case "right":
-                StageCreater.cells[playerCellY, playerCellX] = StageCreater.CellType.Empty;
-                StageCreater.cells[playerCellY, playerCellX + 1] = StageCreater.CellType.Player;
+                StageCreater.cells[playerCellY, playerCellX + 1] = StageCreater.CellType.Empty;
                 break;
             case "left":
-                StageCreater.cells[playerCellY, playerCellX] = StageCreater.CellType.Empty;
-                StageCreater.cells[playerCellY, playerCellX - 1] = StageCreater.CellType.Player;
+                StageCreater.cells[playerCellY, playerCellX - 1] = StageCreater.CellType.Empty;
                 break;
         }
     }
@@ -331,32 +414,22 @@ public class PlayerManager : MonoBehaviour
         {
             return "left";
         }
-
         return "";
     }
 
-    // 宝箱までたどり着いたとき
-    private void OnTriggerEnter2D(Collider2D _collider)
+    // 宝箱にたどり着いているかの確認
+    private bool GetJuweryBoxCheck()
     {
-        if (_collider.transform.tag == "JuweryBox")
+        if (playerCellX == StageCreater.juweryBoxPos.x && playerCellY == StageCreater.juweryBoxPos.y)
         {
-            gameManager.gameStopFlag = true;
-            gameManager.CallSound("clearSE");
-            StartCoroutine(gameManager.ShowClearPanel());
+            return true;
         }
+        return false;
     }
 
-    // 壁にぶつかったとき（範囲外のとき）
-    private void OnCollisionEnter2D(Collision2D _collision)
+    public void ShowClearPanel()
     {
-
-        if (_collision.transform.tag == "Wall")
-        {
-            gameManager.gameStopFlag = true;
-            gameManager.CallSound("mistakeSE");
-            StartCoroutine(gameManager.ShowReTryPanel(attackFlag));
-        }
+        Sound.PlaySe("clearSE");
+        StartCoroutine(gameManager.ShowClearPanel());
     }
-
-
 }
